@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora RCI - Análise Inteligente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 text-gray-800">
+
+<div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8 card">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 text-center mb-1">Calculadora RCI</h1>
+    <p class="text-center text-gray-500 mb-6 text-sm">Sistema Inteligente de Priorização e Conduta Emocional</p>
+
+    <!-- Formulário de Análise -->
+    <div class="no-print space-y-6">
+        <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Nome do Paciente / Cliente:</label>
+            <input type="text" id="clienteNome" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Nome completo...">
+        </div>
+
+        <div class="border-t pt-4">
+            <h3 class="font-bold text-gray-700 mb-2">Avaliação de Sintomas e Intensidade (0 a 10):</h3>
+            <p class="text-xs text-gray-500 mb-4">Atribua uma nota de intensidade para o que o paciente apresenta em cada eixo:</p>
+            
+            <div class="space-y-4">
+                <!-- Eixo 1 -->
+                <div class="p-4 bg-gray-50 rounded-xl border">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-blue-900">1. Sistema de Sobrevivência (Traumas, Pânico, Ansiedade)</span>
+                        <span id="val-1" class="font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-sm">0</span>
+                    </div>
+                    <input type="range" id="score-1" min="0" max="10" value="0" class="w-full accent-blue-600" oninput="document.getElementById('val-1').innerText = this.value">
+                </div>
+
+                <!-- Eixo 2 -->
+                <div class="p-4 bg-gray-50 rounded-xl border">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-blue-900">2. Sistema de Apego (Depressão, Angústia, Solidão)</span>
+                        <span id="val-2" class="font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-sm">0</span>
+                    </div>
+                    <input type="range" id="score-2" min="0" max="10" value="0" class="w-full accent-blue-600" oninput="document.getElementById('val-2').innerText = this.value">
+                </div>
+
+                <!-- Eixo 3 -->
+                <div class="p-4 bg-gray-50 rounded-xl border">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-blue-900">3. Circuito de Recompensa (Vícios, Procrastinação, Fuga da Dor)</span>
+                        <span id="val-3" class="font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-sm">0</span>
+                    </div>
+                    <input type="range" id="score-3" min="0" max="10" value="0" class="w-full accent-blue-600" oninput="document.getElementById('val-3').innerText = this.value">
+                </div>
+
+                <!-- Eixo 4 -->
+                <div class="p-4 bg-gray-50 rounded-xl border">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-blue-900">4. Ruptura de Vínculo (Abusos, Traição, Insegurança Relacional)</span>
+                        <span id="val-4" class="font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-sm">0</span>
+                    </div>
+                    <input type="range" id="score-4" min="0" max="10" value="0" class="w-full accent-blue-600" oninput="document.getElementById('val-4').innerText = this.value">
+                </div>
+
+                <!-- Eixo 5 -->
+                <div class="p-4 bg-gray-50 rounded-xl border">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-sm text-blue-900">5. Somatização e Culpa (Fibromialgia, Culpas, Sobrecarga)</span>
+                        <span id="val-5" class="font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-sm">0</span>
+                    </div>
+                    <input type="range" id="score-5" min="0" max="10" value="0" class="w-full accent-blue-600" oninput="document.getElementById('val-5').innerText = this.value">
+                </div>
+            </div>
+        </div>
+
+        <button onclick="processarAnalise()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition transform active:scale-95 shadow-lg text-lg">
+            GERAR RELATÓRIO DE PRIORIDADES
+        </button>
+    </div>
+
+    <!-- Resultados e Relatório -->
+    <div id="resultado-card" class="hidden mt-8 pt-6 border-t-2 border-dashed">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Relatório Clínico de Prioridades</h2>
+                <p class="text-sm text-gray-600">Paciente: <span id="resCliente" class="font-bold text-blue-700"></span></p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 shadow transition flex items-center gap-2">
+                🖨️ Salvar em PDF / Imprimir
+            </button>
+        </div>
+
+        <div id="lista-prioridades" class="space-y-4"></div>
+
+        <button onclick="window.location.reload()" class="no-print w-full mt-8 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 transition">
+            Nova Análise / Limpar
+        </button>
+    </div>
+</div>
+
+<script>
+const baseDados = {
+    '1': {
+        titulo: 'Sistema de Sobrevivência (Luta / Fuga / Pânico)',
+        raiz: 'Ativação crônica da amígdala cerebral e alerta biológico.',
+        solucao: 'Descondicionamento somático, técnicas de regulação do Sistema Nervoso Autônomo (SNA), ancoragem e desensibilização de gatilhos de perigo.'
+    },
+    '2': {
+        titulo: 'Sistema de Apego (Privação / Perda / Vazio)',
+        raiz: 'Feridas primárias de abandono e desamparo emocional na infância.',
+        solucao: 'Ressignificação de vazios afetivos primários, re-parentalização interna e cura da criança interior ferida.'
+    },
+    '3': {
+        titulo: 'Circuito de Recompensa (Compulsão / Fuga da Dor)',
+        raiz: 'Uso de comportamentos de escape para anestesiar o sofrimento imediato.',
+        solucao: 'Instalação de recursos alternativos de regulação dopaminérgica, aumento da tolerância à frustração e reestruturação de hábitos.'
+    },
+    '4': {
+        titulo: 'Ruptura de Vínculo (Imprinting Relacional / Traição)',
+        raiz: 'Feridas profundas de quebra de confiança, abusos ou desrespeito a limites.',
+        solucao: 'Processamento do evento raiz, restauração do senso de valor próprio, corte de laços traumáticos (cordões energéticos) e reparação de limites.'
+    },
+    '5': {
+        titulo: 'Somatização e Sobrecarga (Culpa / Dores Crônicas)',
+        raiz: 'Acúmulo de raiva reprimida, culpa excessiva convertida em sintomas físicos.',
+        solucao: 'Liberação somática corporal, técnicas de perdão profundo, liberação de autoexigência e reestruturação de crenças de incapacidade.'
+    }
+};
+
+function processarAnalise() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    if (!nome) { alert('Por favor, digite o nome do paciente.'); return; }
+
+    let dadosAvaliacao = [];
+    for (let i = 1; i <= 5; i++) {
+        let score = parseInt(document.getElementById(`score-${i}`).value);
+        if (score > 0) {
+            let grau = '';
+            let corBadge = '';
+            if (score >= 8) {
+                grau = 'Crítico (Prioridade Máxima)';
+                corBadge = 'bg-red-100 text-red-800 border-red-200';
+            } else if (score >= 5) {
+                grau = 'Moderado (Atenção Intermediária)';
+                corBadge = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+            } else {
+                grau = 'Leve (Monitorar)';
+                corBadge = 'bg-blue-100 text-blue-800 border-blue-200';
+            }
+            dadosAvaliacao.push({ id: i, score: score, grau: grau, cor: corBadge, info: baseDados[i] });
+        }
+    }
+
+    if (dadosAvaliacao.length === 0) {
+        alert('Atribua pontuação maior que 0 em pelo menos um eixo.');
+        return;
+    }
+
+    // Ordenar do maior score para o menor (Escala de Prioridades)
+    dadosAvaliacao.sort((a, b) => b.score - a.score);
+
+    const container = document.getElementById('lista-prioridades');
+    container.innerHTML = '';
+    document.getElementById('resCliente').innerText = nome;
+
+    dadosAvaliacao.forEach((item, index) => {
+        container.innerHTML += `
+            <div class="p-5 rounded-xl border bg-white shadow-sm space-y-2 border-l-4 border-l-blue-600">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <span class="font-bold text-base text-blue-900">${index + 1}º Lugar na Prioridade: ${item.info.titulo}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold border ${item.cor}">Intensidade: ${item.score}/10 - ${item.grau}</span>
+                </div>
+                <p class="text-sm text-gray-700"><strong>Raiz Emocional Identificada:</strong> ${item.info.raiz}</p>
+                <div class="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                    <p class="text-sm text-blue-900"><strong>Conduta Terapêutica Indicada:</strong> ${item.info.solucao}</p>
+                </div>
+            </div>`;
+    });
+
+    document.getElementById('resultado-card').classList.remove('hidden');
+    window.scrollTo({ top: document.getElementById('resultado-card').offsetTop, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
