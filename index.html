@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora RCI - Anamnese Avançada (50 Perguntas)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 text-gray-800">
+
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-10 card">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 text-center mb-1">Calculadora RCI - Anamnese Clínica</h1>
+    <p class="text-center text-gray-500 mb-6 text-sm">Sistema de Triagem Profissional de 50 Perguntas com Mapeamento Cronológico</p>
+
+    <!-- Dados do Paciente -->
+    <div class="no-print mb-8 p-4 bg-blue-50 rounded-xl border border-blue-100 space-y-4">
+        <div>
+            <label class="block text-sm font-bold text-blue-900 mb-1">Nome do Paciente / Cliente:</label>
+            <input type="text" id="clienteNome" class="w-full p-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Nome completo...">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-blue-900 mb-1">Idade Atual do Paciente:</label>
+            <input type="number" id="clienteIdade" class="w-full p-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Ex: 35">
+        </div>
+    </div>
+
+    <!-- Questionário (50 Perguntas divididas em 5 Blocos) -->
+    <div id="formulario-perguntas" class="no-print space-y-8">
+        
+        <!-- BLOCO 1: Sobrevivência (Traumas, Pânico, Ansiedade) -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 1: Sistema de Sobrevivência (Traumas, Pânico e Ansiedade)</h3>
+            <div id="bloco-1-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 2: Apego (Depressão, Angústia, Solidão) -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 2: Sistema de Apego (Depressão, Angústia e Solidão)</h3>
+            <div id="bloco-2-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 3: Recompensa (Vícios, Transtornos, Procrastinação) -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 3: Circuito de Recompensa (Vícios, Transtornos e Procrastinação)</h3>
+            <div id="bloco-3-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 4: Vínculo (Abusos, Abandono, Traição) -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 4: Ruptura de Vínculo (Abusos, Abandono e Traição)</h3>
+            <div id="bloco-4-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 5: Somatização (Culpa, Insegurança, Fibromialgia) -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 5: Somatização e Sobrecarga (Culpa, Insegurança e Fibromialgia)</h3>
+            <div id="bloco-5-qs" class="space-y-4"></div>
+        </div>
+
+        <button onclick="processarAnamnese()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition transform active:scale-95 shadow-lg text-lg">
+            PROCESSAR 50 PERGUNTAS E GERAR DIAGNÓSTICO
+        </button>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultado-card" class="hidden mt-8 pt-6 border-t-2 border-dashed space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Relatório Clínico Global</h2>
+                <p class="text-sm text-gray-600">Paciente: <span id="resCliente" class="font-bold text-blue-700"></span> (<span id="resIdade"></span> anos)</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 shadow transition flex items-center gap-2">
+                🖨️ Salvar em PDF / Imprimir
+            </button>
+        </div>
+
+        <div id="lista-prioridades" class="space-y-6"></div>
+
+        <button onclick="window.location.reload()" class="no-print w-full mt-8 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 transition">
+            Nova Anamnese / Reiniciar
+        </button>
+    </div>
+</div>
+
+<script>
+// Banco de 50 perguntas estruturadas (10 por bloco)
+const perguntasDados = {
+    1: [ // Sobrevivência (Traumas, Pânico, Ansiedade)
+        "1. Apresenta sobressaltos repentinos ou sensação constante de perigo iminente?",
+        "2. Tem histórico de episódios de falta de ar, taquicardia ou sensação de morte súbita (pânico)?",
+        "3. Sofreu algum evento traumático marcante no passado que se recusa a lembrar?",
+        "4. Possui hipervigilância crônica (precisa checar portas, monitorar o ambiente ou pessoas)?",
+        "5. Sente dores musculares constantes por tensão de defesa (ombros rígidos, maxilar travado)?",
+        "6. Tem dificuldade extrema em relaxar, sentindo-se esgotado mas em alerta?",
+        "7. Apresenta ansiedade antecipada, sofrendo com o futuro antes que ele aconteça?",
+        "8. Reage com agressividade ou paralisia extrema diante de conflitos inesperados?",
+        "9. Possui fobias específicas (lugares fechados, altura, multidões, animais)?",
+        "10. Tem pesadelos recorrentes ou insônia relacionada a pensamentos de ameaça?"
+    ],
+    2: [ // Apego (Depressão, Angústia, Solidão)
+        "11. Sente um vazio interno crônico, como se faltasse uma parte importante?",
+        "12. Apresenta períodos de tristeza profunda sem causa aparente ou desânimo severo?",
+        "13. Tem medo irracional ou pavor de ser rejeitado ou abandonado pelas pessoas?",
+        "14. Sente uma solidão profunda mesmo quando está acompanhado?",
+        "15. Perdeu o interesse ou o prazer em atividades que antes gostava (anedonia)?",
+        "16. Apresenta choro fácil ou sensibilidade excessiva a pequenas críticas?",
+        "17. Depende da aprovação externa constante para se sentir valioso?",
+        "18. Sente uma angústia no peito que aperta durante o dia ou ao anoitecer?",
+        "19. Carrega um sentimento profundo de desamparo ou de que 'ninguém se importa'?",
+        "20. Tem pensamentos recorrentes de que a vida perdeu o sentido ou o brilho?"
+    ],
+    3: [ // Recompensa (Vícios, Transtornos, Procrastinação)
+        "21. Utiliza comportamentos de fuga (comida, álcool, jogos, telas, compras) para anestesiar a dor?",
+        "22. Sofre de procrastinação crônica, adiando tarefas vitais por incapacidade de foco?",
+        "23. Tem dificuldade extrema em tolerar frustrações ou pequenas contrariedades?",
+        "24. Apresenta impulsividade severa em momentos de estresse emocional?",
+        "25. Busca constantemente dopamina rápida e se entedia com facilidade?",
+        "26. Sente culpa ou vergonha após ceder a compulsões ou hábitos automáticos?",
+        "27. Abandonou metas importantes no meio do caminho por falta de constância?",
+        "28. Usa substâncias ou comportamentos para conseguir dormir ou 'desligar' a mente?",
+        "29. Tem rituais repetitivos ou obsessivos para aliviar ansiedades internas?",
+        "30. Sente que sua vontade própria é fraca diante de estímulos prazerosos nocivos?"
+    ],
+    4: [ // Vínculo (Abusos, Abandono, Traição)
+        "31. Sofreu algum tipo de abuso físico, verbal, psicológico ou sexual no passado?",
+        "32. Vivenciou a separação conflituosa dos pais ou ausência marcante na infância?",
+        "33. Foi vítima de traição profunda por alguém em quem confiava cegamente?",
+        "34. Tem extrema dificuldade em confiar nas intenções das outras pessoas?",
+        "35. Permanece em relações abusivas ou tóxicas por medo de ficar só?",
+        "36. Carrega cicatrizes de humilhações públicas ou desrespeito grave à sua dignidade?",
+        "37. Sente que foi forçado a assumir responsabilidades adultas cedo demais na infância?",
+        "38. Sofre com ciúmes possessivos ou desconfiança crônica no amor?",
+        "39. Tem dificuldade em impor limites, dizendo 'sim' quando quer dizer 'não'?",
+        "40. Guarda rancor ou ressentimento ativo de pessoas que lhe machucaram?"
+    ],
+    5: [ // Somatização (Culpa, Insegurança, Fibromialgia)
+        "41. Apresenta dores crônicas sem causa médica definida (fibromialgia, enxaqueca, dores lombares)?",
+        "42. Carrega uma culpa pesada e autocrítica severa por erros do passado?",
+        "43. Sente-se permanentemente incapaz, inadequado ou com baixa autoestima estrutural?",
+        "44. Apresenta problemas digestivos crônicos (gastrite nervosa, síndrome do intestino irritável)?",
+        "45. Carrega um fardo excessivo de responsabilidade pelos problemas dos outros?",
+        "46. Tem problemas de pele recorrentes (alergias emocionais, psoríase, urticária)?",
+        "47. Sente rigidez corporal frequente como se estivesse 'carregando o mundo nas costas'?",
+        "48. Autocensura-se ou pune-se mentalmente quando comete falhas?",
+        "49. Apresenta quedas de imunidade ou fadiga crônica persistente?",
+        "50. Sente uma opressão interna profunda de dever cumprido com sacrifício e exaustão?"
+    ]
+};
+
+const informacoesBlocos = {
+    1: {
+        titulo: "Bloco 1: Sistema de Sobrevivência (Luta / Fuga / Pânico)",
+        raiz: "Ativação crônica da amígdala cerebral, herança de sustos e registro corporal de perigo iminente.",
+        cronologiaDica: "Busque na linha do tempo eventos de sustos súbitos, acidentes, perdas bruscas na infância ou fases de extrema ameaça vividas pelo paciente."
+    },
+    2: {
+        titulo: "Bloco 2: Sistema de Apego (Privação / Perda / Vazio)",
+        raiz: "Feridas primárias de desamparo, rejeição materna/paterna e ausência de acolhimento seguro nos primeiros anos de vida.",
+        cronologiaDica: "Busque na cronologia momentos de separação dos cuidadores principais, hospitais na infância, frieza emocional familiar ou sentimentos de abandono precoce."
+    },
+    3: {
+        titulo: "Bloco 3: Circuito de Recompensa (Compulsão / Fuga)",
+        raiz: "Tentativa biológica de compensar o sofrimento emocional através de picos de dopamina e anestesia da dor.",
+        cronologiaDica: "Rastreie a idade exata em que o paciente começou a utilizar o vício ou comportamento de fuga como 'muleta emocional' (geralmente na adolescência ou início de fases de estresse)."
+    },
+    4: {
+        titulo: "Bloco 4: Ruptura de Vínculo (Imprinting / Traição / Abuso)",
+        raiz: "Quebra drástica da confiança vincular, violação de limites físicos ou psicológicos em momentos de vulnerabilidade.",
+        cronologiaDica: "Identifique o evento-raiz da quebra de confiança: o ano exato em que ocorreu o abuso, a traição relacional mais marcante ou a ruptura familiar violenta."
+    },
+    5: {
+        titulo: "Bloco 5: Somatização e Sobrecarga (Culpa / Fibromialgia)",
+        raiz: "Conversão de conflitos psicológicos e raiva reprimida em dores corporales, autoexigência e somatização física.",
+        cronologiaDica: "Investigue quando as dores físicas ou os episódios de culpa pesada começaram. Geralmente estão atrelados a um evento de perda de controle ou fardo pesado assumido em uma idade específica."
+    }
+};
+
+// Gerar as perguntas automaticamente no HTML
+window.onload = function() {
+    for (let bloco = 1; bloco <= 5; bloco++) {
+        const container = document.getElementById(`bloco-${bloco}-qs`);
+        perguntasDados[bloco].forEach((pergunta, index) => {
+            container.innerHTML += `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <span class="text-sm font-medium text-gray-700 w-full sm:w-3/4">${pergunta}</span>
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="0" checked class="text-blue-600"> Nunca (0)
+                        </label>
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="1" class="text-blue-600"> Às vezes (1)
+                        </label>
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="2" class="text-blue-600"> Sempre (2)
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+    }
+};
+
+function processarAnamnese() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    const idade = document.getElementById('clienteIdade').value.trim();
+    if (!nome || !idade) { alert('Por favor, preencha o Nome e a Idade do paciente.'); return; }
+
+    let pontuacoesBlocos = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+    // Calcular pontuação de cada bloco (0 a 20 pontos por bloco)
+    for (let bloco = 1; bloco <= 5; bloco++) {
+        for (let index = 0; index < 10; index++) {
+            const selecionado = document.querySelector(`input[name="p_${bloco}_${index}"]:checked`);
+            if (selecionado) {
+                pontuacoesBlocos[bloco] += parseInt(selecionado.value);
+            }
+        }
+    }
+
+    // Organizar em array para ranking de prioridades
+    let ranking = [];
+    for (let b = 1; b <= 5; b++) {
+        ranking.push({ blocoId: b, score: pontuacoesBlocos[b], info: informacoesBlocos[b] });
+    }
+
+    // Ordenar do maior score para o menor (Escala de Prioridades)
+    ranking.sort((a, b) => b.score - a.score);
+
+    const container = document.getElementById('lista-prioridades');
+    container.innerHTML = '';
+    document.getElementById('resCliente').innerText = nome;
+    document.getElementById('resIdade').innerText = idade;
+
+    ranking.forEach((item, posicao) => {
+        let grau = '';
+        let corBadge = '';
+        if (item.score >= 12) {
+            grau = 'Crítico (Prioridade Absoluta)';
+            corBadge = 'bg-red-100 text-red-800 border-red-200';
+        } else if (item.score >= 6) {
+            grau = 'Moderado (Atenção Intermediária)';
+            corBadge = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        } else {
+            grau = 'Leve (Monitoramento)';
+            corBadge = 'bg-blue-100 text-blue-800 border-blue-200';
+        }
+
+        container.innerHTML += `
+            <div class="p-6 rounded-2xl border bg-white shadow-md space-y-3 border-l-8 border-l-blue-600">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <span class="font-extrabold text-lg text-blue-900">${posicao + 1}º Lugar na Prioridade: ${item.info.titulo}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold border ${corBadge}">Pontuação: ${item.score}/20 - ${grau}</span>
+                </div>
+                <p class="text-sm text-gray-700"><strong>Raiz Emocional Principal:</strong> ${item.info.raiz}</p>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                    <p class="text-xs font-bold text-blue-800 uppercase tracking-wider">🎯 Roteiro para Busca Cronológica (Gatilhos do Paciente):</p>
+                    <p class="text-sm text-gray-700">${item.info.cronologiaDica}</p>
+                </div>
+            </div>`;
+    });
+
+    document.getElementById('resultado-card').classList.remove('hidden');
+    window.scrollTo({ top: document.getElementById('resultado-card').offsetTop, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
