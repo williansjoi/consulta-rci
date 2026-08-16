@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora RCI - Anamnese Científica Avançada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4 text-gray-800">
+
+<div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6 md:p-10 card">
+    <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 text-center mb-1">Calculadora RCI</h1>
+    <p class="text-center text-gray-500 mb-6 text-sm">Sistema Científico de Mapeamento Emocional e Conduta Terapêutica</p>
+
+    <!-- Dados do Paciente -->
+    <div class="no-print mb-8 p-4 bg-blue-50 rounded-xl border border-blue-100 space-y-4">
+        <div>
+            <label class="block text-sm font-bold text-blue-900 mb-1">Nome do Paciente / Cliente:</label>
+            <input type="text" id="clienteNome" class="w-full p-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Nome completo...">
+        </div>
+        <div>
+            <label class="block text-sm font-bold text-blue-900 mb-1">Idade Atual do Paciente:</label>
+            <input type="number" id="clienteIdade" class="w-full p-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Ex: 35">
+        </div>
+    </div>
+
+    <!-- Questionário (60 Perguntas) -->
+    <div id="formulario-perguntas" class="no-print space-y-8">
+        
+        <!-- BLOCO 1 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 1: Sobrevivência, Alerta, Pânico e Fuga</h3>
+            <div id="bloco-1-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 2 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 2: Apego, Vazio e Congelamento (Apatia / Desligamento)</h3>
+            <div id="bloco-2-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 3 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 3: Fugas, Vícios, Jogos, Dívidas e Estagnação</h3>
+            <div id="bloco-3-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 4 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 4: Abusos, Traições e Quebra de Vínculo</h3>
+            <div id="bloco-4-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 5 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 5: Somatização, Culpas e Dores Crônicas</h3>
+            <div id="bloco-5-qs" class="space-y-4"></div>
+        </div>
+
+        <!-- BLOCO 6 -->
+        <div class="border rounded-2xl p-4 md:p-6 bg-white shadow-sm">
+            <h3 class="font-bold text-lg text-blue-900 border-b pb-2 mb-4">Bloco 6: Transgeracionalidade e Parentificação (Fardos Familiares)</h3>
+            <div id="bloco-6-qs" class="space-y-4"></div>
+        </div>
+
+        <button onclick="processarAnamnese()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition transform active:scale-95 shadow-lg text-lg">
+            GERAR RELATÓRIO CLÍNICO E CONDUTA
+        </button>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultado-card" class="hidden mt-8 pt-6 border-t-2 border-dashed space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Relatório Clínico de Prioridades e Conduta</h2>
+                <p class="text-sm text-gray-600">Paciente: <span id="resCliente" class="font-bold text-blue-700"></span> (<span id="resIdade"></span> anos)</p>
+            </div>
+            <button onclick="window.print()" class="no-print bg-green-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-green-700 shadow transition flex items-center gap-2">
+                🖨️ Salvar em PDF / Imprimir
+            </button>
+        </div>
+
+        <div id="lista-prioridades" class="space-y-6"></div>
+
+        <button onclick="window.location.reload()" class="no-print w-full mt-8 bg-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-300 transition">
+            Fazer Nova Anamnese / Limpar
+        </button>
+    </div>
+</div>
+
+<script>
+const perguntasDados = {
+    1: [
+        "1. Você costuma levar sustos fáceis ou sente que o seu corpo está sempre em alerta contra perigos?",
+        "2. Já sentiu o coração disparar forte, falta de ar ou pânico repentino sem motivo aparente?",
+        "3. Aconteceu algum evento muito assustador no seu passado que o seu corpo ainda reage quando lembra?",
+        "4. Fica o tempo todo conferindo coisas, trancando portas ou monitorando o ambiente por segurança?",
+        "5. Sente uma agonia nas pernas, formigamento ou necessidade incontrolável de mexê-las (como na Síndrome das Pernas Inquietas), especialmente ao deitar ou tentar relaxar?",
+        "6. Tem extrema dificuldade para relaxar, parecendo que a sua bateria nunca desliga?",
+        "7. Fica sofrendo com o futuro e imaginando desastres antes que eles aconteçam?",
+        "8. Diante de discussões ou surpresas, você reage gritando muito ou travando sem conseguir falar?",
+        "9. Tem medos exagerados de coisas específicas, como altura, lugares fechados ou multidões?",
+        "10. Tem pesadelos frequentes ou perde o sono pensando em ameaças?"
+    ],
+    2: [
+        "11. Sente um vazio profundo no peito, como se estivesse faltando uma parte importante de você?",
+        "12. Fica triste por longos períodos sem conseguir apontar um motivo claro?",
+        "13. Tem um medo irracional de ser abandonado ou rejeitado pelas pessoas que ama?",
+        "14. Sente uma solidão extrema, mesmo quando está rodeado de amigos ou familiares?",
+        "15. Já perdeu totalmente o interesse ou a alegria pelas coisas que antes gostava de fazer?",
+        "16. Sente uma dormência emocional, como se estivesse desligado da vida e não sentisse mais nada?",
+        "17. Precisa o tempo todo da aprovação dos outros para sentir que tem algum valor?",
+        "18. Sente um aperto ou dor no peito recorrente, especialmente no fim do dia?",
+        "19. Acha que ninguém se importa de verdade com a sua dor ou com o que você passa?",
+        "20. Já teve pensamentos de que a vida está muito pesada ou perdeu o sentido?"
+    ],
+    3: [
+        "21. Sente que tenta de tudo, trabalha exaustivamente, mas a sua vida financeira nunca prospera e vive travada?",
+        "22. Vive um ciclo repetitivo de dívidas que nunca acabam, parecendo que o dinheiro escorre pelas mãos?",
+        "23. Joga em apostas online (cassino, esporte, tigrinho) tentando recuperar o dinheiro ou achar uma saída mágica?",
+        "24. Consome pornografia ou usa vícios e hábitos de fuga para anestesiar a frustração diária?",
+        "25. Compra coisas impulsivamente para ter um alívio rápido e depois se arrepende amargamente?",
+        "26. Tem o hábito de mentir ou omitir dos outros a real situação financeira ou os erros que cometeu?",
+        "27. Deixa sempre para depois o que precisa fazer, travando na hora de colocar projetos em prática?",
+        "28. Usa álcool, comida em excesso ou substâncias para conseguir 'desligar' a mente e relaxar?",
+        "29. Desiste muito rápido das coisas quando começam a exigir esforço prolongado?",
+        "30. Sente que existe um bloqueio invisível que impede você de vencer e colher os frutos do seu trabalho?"
+    ],
+    4: [
+        "31. Passou por alguma situação no passado onde foi machucado, desrespeitado ou abusado?",
+        "32. Vivenciou a separação conflituosa dos pais ou uma ausência marcante na infância?",
+        "33. Já foi profundamente traído ou enganado por alguém em quem confiava cegamente?",
+        "34. Acha extremamente difícil confiar nas intenções reais das outras pessoas?",
+        "35. Permanece em relações que te machucam por medo pavoroso de ficar sozinho?",
+        "36. Carrega marcas profundas de humilhações que sofreu de outras pessoas?",
+        "37. Teve que virar adulto rápido demais na infância, assumindo fardos que não eram seus?",
+        "38. Sente ciúmes excessivos ou desconfiança crônica no amor?",
+        "39. Tem uma dificuldade enorme de dizer 'não', aceitando o que não quer para agradar os outros?",
+        "40. Guarda muita raiva, mágoa ou ressentimento antigo de quem te feriu?"
+    ],
+    5: [
+        "41. Sente dores crônicas no corpo (como fibromialgia, dores lombares ou enxaquecas) sem causa médica clara?",
+        "42. Carrega uma culpa pesada por erros do passado, achando que a culpa de tudo é sua?",
+        "43. Acha que nunca é bom o suficiente e que os outros são sempre melhores?",
+        "44. Tem problemas frequentes no estômago ou intestino (gastrite, irritabilidade) quando se estressa?",
+        "45. Põe nas costas o peso, os problemas e a salvação de todo mundo da família?",
+        "46. Tem alergias, problemas de pele ou quedas de imunidade que pioram com o estresse?",
+        "47. Sente o corpo rígido e pesado, como se estivesse carregando um piano nas costas?",
+        "48. Julga-se e pune-se mentalmente com muita severidade quando comete uma falha?",
+        "49. Sente exaustão física crônica, mesmo após ter dormido bem?",
+        "50. Sente que tem que aguentar tudo sozinho, suportando um peso emocional insuportável?"
+    ],
+    6: [
+        "51. Sente que carrega na sua vida um fardo, um destino trágico ou uma dor que também era de seus pais ou avós?",
+        "52. Tem a sensação de que não pode prosperar ou ser feliz para não 'trair' ou superar a pobreza/sofrimento da família?",
+        "53. Na infância, você precisou cuidar emocionalmente dos seus pais (inversão de papéis / parentificação)?",
+        "54. Existe na sua família histórico de falências repetidas, mortes trágicas ou vícios que parecem passar de geração em geração?",
+        "55. Sente uma culpa inconsciente profunda quando consegue conquistar algo bom na vida?",
+        "56. Há pessoas excluídas, renegadas ou 'esquecidas' na história da sua família?",
+        "57. Sente que repete exatamente os mesmos erros e casamentos difíceis que os seus pais viveram?",
+        "58. Carrega um sentimento de não pertencimento, como se não encaixasse na sua própria família?",
+        "59. Teve perdas gestacionais, abortos ou lutos na família que nunca foram chorados ou citados?",
+        "60. Sente que vive a vida no piloto automático, cumprindo um roteiro que parece não ser seu?"
+    ]
+};
+
+const informacoesBlocos = {
+    1: {
+        titulo: "Bloco 1: Sobrevivência, Alerta, Pânico e Fuga",
+        raiz: "O sistema nervoso autônomo está travado no modo de defesa, alerta e impulso de fuga reprimido (manifestando-se com pânico ou pernas inquietas).",
+        cronologiaDica: "Busque na linha do tempo sustos fortes, acidentes, perdas bruscas ou fases de grande medo na infância e juventude.",
+        conduta: "Executar descarga somática da energia de fuga travada (movimentos de empurrar/correr contidos), regulação do sistema nervoso via Teoria Polivagal e desativação da hipervigilância corporal."
+    },
+    2: {
+        titulo: "Bloco 2: Apego, Vazio e Congelamento",
+        raiz: "Desamparo emocional precoce e estado de dormência/congelamento (hipoativação do sistema nervoso).",
+        cronologiaDica: "Rastreie momentos de separação dos cuidadores principais, frieza afetiva em casa ou abandono precoce.",
+        conduta: "Promover o descongelamento gradual da hipoativação, acolhimento profundo da criança interior solitária e resgate da sensação de segurança interna e presença."
+    },
+    3: {
+        titulo: "Bloco 3: Fugas, Vícios, Dívidas e Estagnação",
+        raiz: "Bloqueio de prosperidade, autossabotagem e uso de compulsões (jogos, dívidas, pornografia) para anestesiar a frustração.",
+        cronologiaDica: "Rastreie o momento exato em que a vida financeira ou profissional travou, ou se há lealdade à escassez familiar.",
+        conduta: "Interromper o circuito de recompensa imediata (dopamina), ressignificar o bloqueio de merecimento financeiro e responsabilizar o adulto perante os ciclos de autossabotagem."
+    },
+    4: {
+        titulo: "Bloco 4: Abusos, Traições e Quebra de Vínculo",
+        raiz: "Ruptura profunda da confiança vincular e violação de limites físicos ou psicológicos.",
+        cronologiaDica: "Identifique a idade exata em que ocorreu o abuso, a traição mais marcante ou a quebra violenta de limites.",
+        conduta: "Restabelecer fronteiras e limites pessoais, ressignificar a cena traumática original e devolver a culpa ou responsabilidade inteiramente para o abusador/agressor."
+    },
+    5: {
+        titulo: "Bloco 5: Somatização, Culpas e Dores Crônicas",
+        raiz: "Conversão de conflitos psicológicos, raiva reprimida e culpa excessiva em sintomas somáticos e dores corporais.",
+        cronologiaDica: "Investigue quando as dores físicas ou a culpa pesada começaram, atreladas a um fardo assumido em idade específica.",
+        conduta: "Mapear a conversão somática do conflito, liberar a culpa internalizada e canalizar a expressão assertiva da raiva reprimida que o corpo transformou em dor."
+    },
+    6: {
+        titulo: "Bloco 6: Transgeracionalidade e Parentificação",
+        raiz: "Lealdades sistêmicas invisíveis, repetição de destinos familiares e fardos carregados por gerações (epigenética comportamental).",
+        cronologiaDica: "Rastreie a história dos pais e avós: quais fardos, falências ou dores eles viveram na mesma idade em que o paciente começou a sofrer.",
+        conduta: "Realizar o desligamento dos fardos parentais (devolver o que pertence aos pais), curar a inversão de papéis da parentificação e honrar a família sem repetir destinos trágicos."
+    }
+};
+
+window.onload = function() {
+    for (let bloco = 1; bloco <= 6; bloco++) {
+        const container = document.getElementById(`bloco-${bloco}-qs`);
+        perguntasDados[bloco].forEach((pergunta, index) => {
+            container.innerHTML += `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <span class="text-sm font-medium text-gray-700 w-full sm:w-3/4">${pergunta}</span>
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="0" checked class="text-blue-600"> Nunca (0)
+                        </label>
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="1" class="text-blue-600"> Às vezes (1)
+                        </label>
+                        <label class="px-3 py-1 bg-white border rounded-lg cursor-pointer text-xs font-bold hover:bg-slate-100 flex items-center gap-1 shadow-sm">
+                            <input type="radio" name="p_${bloco}_${index}" value="2" class="text-blue-600"> Sempre (2)
+                        </label>
+                    </div>
+                </div>
+            `;
+        });
+    }
+};
+
+function processarAnamnese() {
+    const nome = document.getElementById('clienteNome').value.trim();
+    const idade = document.getElementById('clienteIdade').value.trim();
+    if (!nome || !idade) { alert('Por favor, preencha o Nome e a Idade do paciente.'); return; }
+
+    let pontuacoesBlocos = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+
+    for (let bloco = 1; bloco <= 6; bloco++) {
+        for (let index = 0; index < 10; index++) {
+            const selecionado = document.querySelector(`input[name="p_${bloco}_${index}"]:checked`);
+            if (selecionado) {
+                pontuacoesBlocos[bloco] += parseInt(selecionado.value);
+            }
+        }
+    }
+
+    let ranking = [];
+    for (let b = 1; b <= 6; b++) {
+        ranking.push({ blocoId: b, score: pontuacoesBlocos[b], info: informacoesBlocos[b] });
+    }
+
+    ranking.sort((a, b) => b.score - a.score);
+
+    const container = document.getElementById('lista-prioridades');
+    container.innerHTML = '';
+    document.getElementById('resCliente').innerText = nome;
+    document.getElementById('resIdade').innerText = idade;
+
+    ranking.forEach((item, posicao) => {
+        let grau = '';
+        let corBadge = '';
+        if (item.score >= 12) {
+            grau = 'Crítico (Prioridade Máxima)';
+            corBadge = 'bg-red-100 text-red-800 border-red-200';
+        } else if (item.score >= 6) {
+            grau = 'Moderado (Atenção)';
+            corBadge = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        } else {
+            grau = 'Leve (Monitorar)';
+            corBadge = 'bg-blue-100 text-blue-800 border-blue-200';
+        }
+
+        container.innerHTML += `
+            <div class="p-6 rounded-2xl border bg-white shadow-md space-y-3 border-l-8 border-l-blue-600">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <span class="font-extrabold text-lg text-blue-900">${posicao + 1}º Lugar na Prioridade: ${item.info.titulo}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold border ${corBadge}">Pontuação: ${item.score}/20 - ${grau}</span>
+                </div>
+                <p class="text-sm text-gray-700"><strong>Onde está a Raiz Principal:</strong> ${item.info.raiz}</p>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                    <p class="text-xs font-bold text-blue-800 uppercase tracking-wider">🎯 Roteiro para Fazer a Busca Cronológica:</p>
+                    <p class="text-sm text-gray-700">${item.info.cronologiaDica}</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 space-y-1">
+                    <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">🛠️ Conduta Terapêutica Recomendada:</p>
+                    <p class="text-sm text-gray-700">${item.info.conduta}</p>
+                </div>
+            </div>`;
+    });
+
+    document.getElementById('resultado-card').classList.remove('hidden');
+    window.scrollTo({ top: document.getElementById('resultado-card').offsetTop, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
