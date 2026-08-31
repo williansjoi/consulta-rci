@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Mapeamento Neuropsicossomático & RCI</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --accent-green: #dcfce7;
+            --accent-green-text: #14532d;
+            --accent-yellow: #fef9c3;
+            --accent-yellow-text: #713f12;
+            --accent-purple: #f3e8ff;
+            --accent-purple-text: #581c87;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 0 0 8px 0;
+        }
+
+        .header p {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .field-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .options label {
+            font-weight: normal;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.95;
+        }
+
+        /* Relatório estilo cards */
+        .report-card {
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+
+        .report-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .badge-score {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .box-info {
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .box-simple { background: var(--primary-light); color: var(--primary); }
+        .box-body { background: #f1f5f9; color: var(--text); }
+        .box-question { background: var(--accent-yellow); color: var(--accent-yellow-text); }
+        .box-action { background: var(--accent-green); color: var(--accent-green-text); }
+        .box-nutri { background: var(--accent-purple); color: var(--accent-purple-text); }
+
+        .box-info strong {
+            display: block;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        #report-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Sistema de Mapeamento Neuropsicossomático & RCI</h1>
+        <p>Protocolo Clínico de Análise Somática e Suporte Integrativo</p>
+    </div>
+
+    <form id="mapping-form">
+        <div class="section-title">1. Dados do Paciente & Linha do Tempo da Dor</div>
+        
+        <div class="field-group">
+            <label>Nome Completo do Paciente:</label>
+            <input type="text" id="patient-name" required placeholder="Digite o nome...">
+        </div>
+
+        <div class="field-group">
+            <label>Idade Atual:</label>
+            <input type="number" id="patient-age" required placeholder="Ex: 53">
+        </div>
+
+        <div class="field-group">
+            <label>Gatilho Recente (Últimos 1 a 2 anos):</label>
+            <select id="recent-trigger">
+                <option value="Nenhum evento grave recente">Nenhum evento grave recente</option>
+                <option value="Perda de emprego ou crise no trabalho">Perda de emprego ou crise no trabalho</option>
+                <option value="Término de relacionamento ou divórcio">Término de relacionamento ou divórcio</option>
+                <option value="Luto ou doença grave na família">Luto ou doença grave na família</option>
+            </select>
+        </div>
+
+        <div class="field-group">
+            <label>Fase Escolar e Juventude (8 aos 18 anos):</label>
+            <select id="youth-trigger">
+                <option value="Juventude tranquila e sem grandes marcas">Juventude tranquila e sem grandes marcas</option>
+                <option value="Bullying ou cobrança excessiva nos estudos">Bullying ou cobrança excessiva nos estudos</option>
+                <option value="Brigas familiares frequentes ou separação dos pais">Brigas familiares frequentes ou separação dos pais</option>
+            </select>
+        </div>
+
+        <div class="field-group">
+            <label>Primeiros Anos de Vida (0 aos 7 anos):</label>
+            <select id="childhood-trigger">
+                <option value="Infância inicial segura e calma">Infância inicial segura e calma</option>
+                <option value="Parto difícil, complicações ou UTI ao nascer">Parto difícil, complicações ou UTI ao nascer</option>
+                <option value="Sensação de abandono, rejeição ou medo constante">Sensação de abandono, rejeição ou medo constante</option>
+            </select>
+        </div>
+
+        <div class="section-title">2. Perguntas do Mapeamento</div>
+        
+        <div id="questions-container">
+            <!-- As perguntas expandidas serão geradas via JavaScript -->
+        </div>
+
+        <button type="submit" class="btn-submit">Gerar Relatório Clínico</button>
+    </form>
+
+    <div id="report-section">
+        <div class="section-title">Relatório de Mapeamento Clínico</div>
+        <div id="timeline-summary"></div>
+        <div id="groups-report"></div>
+        <button onclick="window.location.reload()" class="btn-submit" style="background: #64748b;">Iniciar Novo Mapeamento</button>
+    </div>
+</div>
+
+<script>
+const groupData = [
+    {
+        id: 1,
+        title: "Grupo 1: Ansiedade, Pânico e Corpo em Estado de Alerta",
+        simple: "O alarme do cérebro travou ligado no modo perigo. O corpo gasta toda a energia tentando se proteger e não consegue relaxar.",
+        body: "O centro de medo do cérebro está disparando sinal de socorro o tempo todo, gastando os nutrientes do sossego e causando palpitações e tensão.",
+        question: "Lembre-se da primeira vez em que sentiu o coração disparar e o corpo travar de medo. O que estava acontecendo naquele momento?",
+        action: "Aplique o RCI focado na cena do primeiro susto/pânico. Reprocesse o evento até o corpo desativar o alarme e o peito relaxar.",
+        nutri: "Magnésio Inositol, L-Teanina, Taurina e Chá de Camomila com Mulungu.",
+        questions: [
+            "Sente palpitações, coração acelerado ou aperto no peito sem motivo físico aparente?",
+            "Acorda frequentemente assustado ou sente um aperto no estômago logo pela manhã?",
+            "Tem a sensação constante de que algo ruim ou uma tragédia vai acontecer a qualquer momento?",
+            "Sente falta de ar repentina, como se o ar não chegasse até o fundo dos pulmões?",
+            "Apresenta tremores nas mãos ou nas pernas em momentos de tensão ou sob estresse?",
+            "Sente tontura, sensação de desmaio ou flutuação quando entra em ambientes muito cheios?",
+            "Tem dificuldade para desacelerar os pensamentos na hora de dormir por inquietação no corpo?",
+            "Sente formigamento nas extremidades (mãos, pés ou lábios) quando fica tenso?",
+            "Evita lugares ou situações por medo de passar mal e não ter como ser socorrido?",
+            "Percebe que sua suor frio aumenta repentinamente diante de imprevistos do dia a dia?"
+        ]
+    },
+    {
+        id: 3,
+        title: "Grupo 3: Trava no Dinheiro, Projetos Parados e Autossabotagem",
+        simple: "A mente aprendeu no passado que ter sucesso ou sobressair traz perigo, então ela puxa o freio de mão sempre que a pessoa vai avançar.",
+        body: "Existe uma regra invisível no cérebro que diz que crescer na vida vai me afastar das pessoas ou atrair dor.",
+        question: "Sinta a trava de crescer na vida e pergunte: 'O que te ensinaram ou o que você viu na infância sobre o dinheiro causar brigas ou dor?'",
+        action: "Aplique o RCI nas memórias infantis de brigas por dinheiro ou falta de recursos. Reprocesse o medo de passar necessidade para liberar a capacidade de crescer.",
+        nutri: "Coenzima Q10, Zinco, Magnésio Dimalato e Óleo de Peixe (Ômega-3) para dar energia mental.",
+        questions: [
+            "Sente que quando suas finanças começam a melhorar, algo acontece para o dinheiro sumir?",
+            "Procrastina ou abandona projetos importantes no meio do caminho?",
+            "Sente um aperto ou culpa no peito ao cobrar pelo seu trabalho ou pedir um aumento?",
+            "Sente que trabalha exaustivamente, mas o retorno financeiro nunca acompanha o seu esforço?",
+            "Tem a sensação de que não merece ter uma vida próspera e confortável?",
+            "Gasta dinheiro impulsivamente ou faz dívidas sem necessidade logo que recebe um valor maior?",
+            "Sente medo paralisaante antes de tomar decisões importantes que impulsionariam sua carreira?",
+            "Cresceu ouvindo que dinheiro é sujo, traz discórdia ou que pessoas ricas não são honestas?",
+            "Recusa oportunidades de destaque por medo velado de ser julgado ou invejado?",
+            "Trava completamente ao ter que planejar ou gerenciar seu futuro financeiro a longo prazo?"
+        ]
+    },
+    {
+        id: 4,
+        title: "Grupo 4: Trações, Invasões de Limite e Dificuldade em Confiar",
+        simple: "A proteção da vida foi quebrada no passado por quem devia cuidar. Agora a pessoa vive com o escudo levantado.",
+        body: "A mente perdeu o filtro de saber quem é confiável, vivendo na defensiva contra novos machucados.",
+        question: "Conecte-se com a raiva de ser enganado e pergunte: 'Qual foi a primeira pessoa de confiança que quebrou uma promessa com você?'",
+        action: "Aplique o RCI focado na cena do engano até a nota de dor zerar. Em seguida, oriente o paciente a praticar dizer 'não' no dia a dia sem sentir vergonha ou culpa.",
+        nutri: "Ashwagandha (para diminuir o hormônio do estresse), Ômega-3 e Chá de Mulungu à noite.",
+        questions: [
+            "Sente extrema dificuldade em confiar nas pessoas, mesmo nas mais próximas?",
+            "Aceita sobrecarga de trabalho ou favores por medo de dizer 'não' e ser rejeitado?",
+            "Percebe que está sempre antecipando intenções maldosas ou segundas intenções dos outros?",
+            "Tem facilidade para cortar laços e afastar pessoas da sua vida ao menor sinal de falha?",
+            "Permite que invasões de privacidade ou abusos morais aconteçam por medo de confronto?",
+            "Guarda rancor prolongado e planeja defesas emocionais para nunca mais ser pego de surpresa?",
+            "Sente-se explorado nas suas relações amorosas ou profissionais de forma recorrente?",
+            "Evita expor sua verdadeira opinião ou sentimentos para não se colocar em vulnerabilidade?",
+            "Desenvolve dores ou tensões corporais intensas quando precisa impor um limite a alguém?",
+            "Sente que tem que resolver tudo sozinho porque não pode contar com o apoio de ninguém?"
+        ]
+    },
+    {
+        id: 7,
+        title: "Grupo 7: Dores de Cabeça Frequentes e Enxaqueca",
+        simple: "Muitos pensamentos rodando ao mesmo tempo e raiva engolida em silêncio que faz a cabeça esquentar e latejar.",
+        body: "Os vasos sanguíneos da cabeça apertam e soltam com força pelo excesso de controle e cobrança interna.",
+        question: "Sinta a dor de cabeça e pergunte: 'Qual situação atual ou do passado você está tentando controlar e não consegue?'",
+        action: "Aplique o RCI na primeira lembrança em que você teve que segurar a raiva e fingir que estava tudo bem.",
+        nutri: "Coenzima Q10, Magnésio Citrato, Riboflavina (Vitamina B2) e Chá de Hortelã.",
+        questions: [
+            "Tem dores de cabeça frequentes após dias de muita cobrança ou estresse?",
+            "Sente a cabeça 'pesada' por passar o dia pensando em soluções sem parar?",
+            "Sente fisgadas ou dor latejante em apenas um dos lados da cabeça com frequência?",
+            "Apresenta sensibilidade intensa à luz, ao barulho ou a cheiros fortes durante as crises?",
+            "Percebe que a dor de cabeça surge logo após episódios em que precisou engolir a raiva?",
+            "Acorda com a cabeça doendo depois de ter noites de sono conturbadas e tensas?",
+            "Tenta controlar rigorosamente todos os detalhes da sua rotina para evitar imprevistos?",
+            "Sente enjoo, náuseas ou mal-estar no estômago acompanhando os episódios de dor de cabeça?",
+            "Percebe a musculatura do pescoço e dos ombros extremamente rígida antes da dor subir?",
+            "Sente fadiga mental intensa após resolver conflitos ou problemas de outras pessoas?"
+        ]
+    },
+    {
+        id: 8,
+        title: "Grupo 8: Peso da Família e Cuidados com os Pais",
+        simple: "A pessoa pegou para si as dores, as dívidas e os problemas dos pais por amor e cuidado exagerado.",
+        body: "Inversão de papéis: a criança virou 'mãe dos próprios pais' e agora carrega uma mala de responsabilidades que não é dela.",
+        question: "Sinta o peso nas costas e pergunte: 'Qual dor ou segredo da sua família você tenta carregar para poupar seus pais?'",
+        action: "Aplique o RCI nas memórias em que você se sentiu responsável por salvar seus pais. Devolva emocionalmente esse peso a eles.",
+        nutri: "Vitamina B12, Zinco e Chá de Erva-Cidreira.",
+        questions: [
+            "Sente que carrega os problemas financeiros ou emocionais da sua família nas costas?",
+            "Sente culpa quando tenta cuidar de si mesmo em vez de resolver os problemas dos outros?",
+            "Assumiu desde muito jovem responsabilidades de adulto no seu núcleo familiar?",
+            "Percebe uma dor constante nos ombros ou na região da torácica como se carregasse um fardo?",
+            "Coloca as necessidades de pais, irmãos ou parentes sempre à frente das suas próprias?",
+            "Acredita que se você não intervir, a sua família vai se desestruturar completamente?",
+            "Sente raiva reprimida por ter que resolver crises familiares que não foram causadas por você?",
+            "Abre mão dos seus próprios sonhos ou planos de vida para não deixar seus pais desamparados?",
+            "Sente-se o 'pilar' da casa e percebe exaustão extrema por não ter onde se apoiar?",
+            "Experimenta conflitos frequentes no casamento porque a família de origem vem em primeiro lugar?"
+        ]
+    },
+    {
+        id: 9,
+        title: "Grupo 9: Cobrança Interna, Autocrítica e Perfeccionismo",
+        simple: "Uma voz brava por dentro que critica tudo o que a pessoa faz, dizendo que ela nunca é boa o suficiente.",
+        body: "A mente ficou presa na sensação de ter cometido um erro grave e se pune todos os dias sem se dar perdão.",
+        question: "Ouça a voz que te critica por dentro e pergunte: 'Quem foi a primeira pessoa que te fez sentir que você precisava ser perfeito para ser amado?'",
+        action: "Aplique o RCI na cena infantil em que o paciente foi cobrado ou severamente criticado. Reprocesse o evento até desarmar a voz de cobrança interior.",
+        nutri: "L-Teanina, Complexo B e Chá de Melissa.",
+        questions: [
+            "Sente uma necessidade exagerada de resolver a vida dos outros só para se sentir valorizado?",
+            "Revisa várias vezes o que faz por medo de cometer qualquer pequeno erro?",
+            "Fica repassando mentalmente conversas antigas e se culpando pelo que disse ou deixou de dizer?",
+            "Tem dificuldade extrema para aceitar elogios, achando que fez apenas a sua obrigação?",
+            "Sente sofrimento intenso e vergonha quando recebe alguma crítica sobre seu trabalho?",
+            "Exige um padrão de perfeição irreal de si mesmo em todas as áreas da vida?",
+            "Sente que precisa trabalhar até a exaustão para provar o seu valor para as pessoas?",
+            "Apresenta dor ou queimação no estômago quando percebe que algo saiu fora do seu controle?",
+            "Compara-se constantemente com os outros e sente que está sempre ficando para trás?",
+            "Dificilmente comemora suas próprias conquistas por já estar focado no próximo desafio?"
+        ]
+    },
+    {
+        id: 10,
+        title: "Grupo 10: Perda de Pessoas Amadas, Lutos e Saudade Dolorosa",
+        simple: "A vida parou no dia em que uma pessoa querida foi embora. O choro e a dor ficaram trancados no peito.",
+        body: "O cérebro não conseguiu aceitar a despedida e ficou preso no momento do choque e da perda.",
+        question: "Sinta o nó na garganta e pergunte: 'Qual foi a despedida que você não conseguiu dar ou a pessoa amada da qual não pôde se despedir?'",
+        action: "Aplique o RCI na cena da despedida (or da falta dela). Guie o paciente para entregar a dor e guardar apenas as lembranças boas do ente querido.",
+        nutri: "Triptofano, Magnésio e Chá de Folhas de Maracujá.",
+        questions: [
+            "Vivenciou perdas de bebês (abortos), gestações interrompidas ou perdas na família?",
+            "Sente uma dor no peito ou choro preso ao lembrar de alguém que já se foi?",
+            "Percebe que a sua alegria de viver diminuiu drasticamente após a morte de um ente querido?",
+            "Sente constante aperto na garganta (nó na garganta) quando fala de ausências significativas?",
+            "Guarda pertences ou evita mexer no quarto de quem faleceu por não aceitar a perda?",
+            "Sente apego excessivo às pessoas com medo terrível de que elas também morram a qualquer hora?",
+            "Experimenta datas comemorativas ou aniversários com profunda tristeza e isolamento?",
+            "Vivenciou o luto de forma solitária, sem poder expressar abertamente a sua dor na época?",
+            "Sente culpa por continuar vivendo ou sorrindo após a partida de uma pessoa amada?",
+            "Sente vazio constante no abdômen ou peito ao lembrar dos momentos da despedida?"
+        ]
+    },
+    {
+        id: 14,
+        title: "Grupo 14: Zumbido no Ouvido e Aperto nos Dentes",
+        simple: "Um apito no ouvido que avisa que a mente cansou de escutar barulho e cobrança, junto com os dentes travados de guardar raiva.",
+        body: "Cansaço do sistema auditivo e da mandíbula de tanto manter o corpo sob pressão sem conseguir descansar.",
+        question: "Escute o apito no ouvido ou aperte a mandíbula e pergunte: 'O que você não aguenta mais ouvir ou qual raiva está guardando sem falar?'",
+        action: "Peça para o paciente focar no barulho ou na pressão nos dentes e achar a lembrança de quando teve que engolir raiva em silêncio. Aplique o RCI nessa cena.",
+        nutri: "Ginkgo Biloba, Coenzima Q10, Magnésio L-Treonato e B12.",
+        questions: [
+            "Sente um zumbido ou apito no ouvido quando fica muito cansado ou estressado?",
+            "Acorda com a mandíbula dolorida ou percebe que aperta os dentes durante o dia?",
+            "Apresenta estalos no maxilar ao mastigar ou ao abrir a boca para falar?",
+            "Sente sensibilidade nos dentes sem causa odontológica identificada pelo dentista?",
+            "Percebe o zumbido aumentar quando está em silêncio antes de adormecer?",
+            "Sente que está 'engolindo sapos' e guardando respostas afiadas para evitar brigas?",
+            "Tem episódios de tontura leve associados à sensação de ouvido tampado?",
+            "Morde o interior das bochechas ou aperta a língua contra os dentes quando está concentrado?",
+            "Fica irritado com facilidade ao escutar vozes elevadas, ruídos contínuos ou cobranças?",
+            "Sente a musculatura da face enrijecida e dolorida ao final do expediente de trabalho?"
+        ]
+    }
+];
+
+// Gerar as perguntas dinamicamente no formulário
+const container = document.getElementById('questions-container');
+let globalQuestionIndex = 1;
+
+groupData.forEach(group => {
+    const groupDiv = document.createElement('div');
+    groupDiv.style.marginBottom = "20px";
+    
+    const groupTitle = document.createElement('h4');
+    groupTitle.style.color = "var(--primary)";
+    groupTitle.style.marginBottom = "10px";
+    groupTitle.innerText = group.title;
+    groupDiv.appendChild(groupTitle);
+
+    group.questions.forEach(qText => {
+        const card = document.createElement('div');
+        card.className = "question-card";
+        const qId = `q_${globalQuestionIndex}`;
+        
+        card.innerHTML = `
+            <div class="question-text">${globalQuestionIndex}. ${qText}</div>
+            <div class="options">
+                <label><input type="radio" name="${qId}" value="0" checked> Não (0)</label>
+                <label><input type="radio" name="${qId}" value="1"> Às vezes (1)</label>
+                <label><input type="radio" name="${qId}" value="2"> Sim (2)</label>
+            </div>
+        `;
+        groupDiv.appendChild(card);
+        globalQuestionIndex++;
+    });
+
+    container.appendChild(groupDiv);
+});
+
+// Processar o formulário
+document.getElementById('mapping-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('patient-name').value;
+    const age = document.getElementById('patient-age').value;
+    const triggerR = document.getElementById('recent-trigger').value;
+    const triggerY = document.getElementById('youth-trigger').value;
+    const triggerC = document.getElementById('childhood-trigger').value;
+
+    // Esconder formulário e mostrar relatório
+    document.getElementById('mapping-form').style.display = 'none';
+    const reportSection = document.getElementById('report-section');
+    reportSection.style.display = 'block';
+
+    // Linha do tempo
+    document.getElementById('timeline-summary').innerHTML = `
+        <div class="report-card" style="border-left-color: #64748b;">
+            <h3>Paciente: ${name} (${age} anos)</h3>
+            <p><strong>Gatilho Recente:</strong> ${triggerR}</p>
+            <p><strong>Fase Escolar (8-18 anos):</strong> ${triggerY}</p>
+            <p><strong>Infância (0-7 anos):</strong> ${triggerC}</p>
+        </div>
+    `;
+
+    // Processar grupos
+    const groupsReport = document.getElementById('groups-report');
+    groupsReport.innerHTML = '';
+
+    let qCounter = 1;
+    groupData.forEach(group => {
+        let score = 0;
+        group.questions.forEach(() => {
+            const val = parseInt(document.querySelector(`input[name="q_${qCounter}"]:checked`).value);
+            score += val;
+            qCounter++;
+        });
+
+        const maxScore = group.questions.length * 2;
+        const percentage = Math.round((score / maxScore) * 100);
+
+        let statusText = "Nível Leve ou Tranquilo";
+        if (percentage >= 50) statusText = "Atenção Moderada";
+        if (percentage >= 75) statusText = "Atenção Alta - Prioridade Clínica";
+
+        const card = document.createElement('div');
+        card.className = "report-card";
+        card.innerHTML = `
+            <h3>${group.title}</h3>
+            <span class="badge-score">Pontuação: ${score}/${maxScore} (${percentage}%) - ${statusText}</span>
+            
+            <div class="box-info box-simple">
+                <strong>Entenda em Palavras Simples:</strong>
+                ${group.simple}
+            </div>
+
+            <div class="box-info box-body">
+                <strong>O que acontece no Corpo e na Mente:</strong>
+                ${group.body}
+            </div>
+
+            <div class="box-info box-question">
+                <strong>Pergunta Chave para Achar o Primeiro Trauma:</strong>
+                ${group.question}
+            </div>
+
+            <div class="box-info box-action">
+                <strong>Como o Terapeuta Deve Agir (Reprocessamento RCI):</strong>
+                ${group.action}
+            </div>
+
+            <div class="box-info box-nutri">
+                <strong>Vitaminas e Nutrientes Amigos do Corpo:</strong>
+                ${group.nutri}
+            </div>
+        `;
+        groupsReport.appendChild(card);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+</body>
+</html>
