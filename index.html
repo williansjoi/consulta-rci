@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Mapeamento Neuropsicossomático & RCI</title>
+  <style>
+    :root {
+      --bg-color: #f4f7fc;
+      --card-bg: #ffffff;
+      --primary-blue: #0f2b5c;
+      --group-title: #0f2b5c;
+      --border-card: #e2e8f0;
+      --text-dark: #2d3748;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      max-width: 600px;
+      width: 100%;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .main-title {
+      color: var(--primary-blue);
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .sub-title {
+      color: #718096;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .section-header {
+      color: var(--primary-blue);
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 25px;
+      margin-bottom: 15px;
+    }
+
+    .field-box {
+      margin-bottom: 15px;
+    }
+
+    .field-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 14px;
+      box-sizing: border-box;
+      color: #4a5568;
+    }
+
+    .group-header {
+      color: var(--primary-blue);
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    /* Card da Pergunta - Igual ao print original */
+    .question-card {
+      background: #ffffff;
+      border: 1px solid #e8ee00;
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .question-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .options-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a5568;
+      cursor: pointer;
+    }
+
+    .option-label input[type="radio"] {
+      margin-right: 6px;
+      accent-color: #2563eb;
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-print {
+      width: 100%;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      margin-top: 30px;
+      cursor: pointer;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .app-container { box-shadow: none; max-width: 100%; padding: 0; }
+      .btn-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="main-title">Sistema de Mapeamento<br>Neuropsicossomático & RCI</div>
+  <div class="sub-title">Protocolo Clínico de Análise Somática e Suporte Integrativo</div>
+
+  <!-- 1. DADOS E LINHA DO TEMPO -->
+  <div class="section-header">1. Dados do Paciente & Linha do Tempo da Dor</div>
+
+  <div class="field-box">
+    <label class="field-label">Nome Completo do Paciente:</label>
+    <input type="text" placeholder="Digite o nome...">
+  </div>
+
+  <div class="field-box">
+    <label class="field-label">Idade Atual:</label>
+    <input type="number" placeholder="Ex: 38">
+  </div>
+
+  <div class="field-box">
+    <label class="field-label">Gatilho Recente (Últimos 1 a 2 anos):</label>
+    <select>
+      <option>Nenhum evento grave recente</option>
+      <option>Perda familiar ou término afetivo</option>
+      <option>Estresse financeiro ou profissional severo</option>
+      <option>Mudança drástica de vida / Sobrecarga</option>
+    </select>
+  </div>
+
+  <div class="field-box">
+    <label class="field-label">Fase Escolar e Juventude (8 aos 18 anos):</label>
+    <select>
+      <option>Juventude tranquila e sem grandes marcas</option>
+      <option>Bullying ou rejeição escolar</option>
+      <option>Pressão familiar intensa ou cobranças</option>
+      <option>Conflitos de identidade ou isolamento</option>
+    </select>
+  </div>
+
+  <div class="field-box">
+    <label class="field-label">Primeiros Anos de Vida (0 aos 7 anos):</label>
+    <select>
+      <option>Infância inicial segura e calma</option>
+      <option>Sensação de abandono ou rejeição</option>
+      <option>Ambiente familiar instável ou com conflitos</option>
+      <option>Medos frequentes e hipervigilância infantil</option>
+    </select>
+  </div>
+
+  <!-- 2. PERGUNTA POR PERGUNTA -->
+  <div class="section-header">2. Pergunta por Pergunta (14 Grupos de Sintomas)</div>
+
+  <!-- GRUPO 1 -->
+  <div class="group-header">Grupo 1: Ansiedade, Pânico e Corpo em Estado de Alerta</div>
+  
+  <div class="question-card">
+    <div class="question-text">1. Sente o corpo constantemente tenso, como se estivesse sob ameaça ou em alerta contínuo?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q1" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q1" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q1" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">2. Sofre com crises súbitas de pânico, falta de ar ou fobias que paralisam sua rotina?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q2" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q2" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q2" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 4 -->
+  <div class="group-header">Grupo 4: Trações, Invasões de Limite e Dificuldade em Confiar</div>
+
+  <div class="question-card">
+    <div class="question-text">5. Sente extrema dificuldade em confiar nas pessoas, mesmo nas mais próximas?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q5" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q5" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q5" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">6. Aceita sobrecarga de trabalho ou favores por medo de dizer 'não' e ser rejeitado?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q6" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q6" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q6" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 7 -->
+  <div class="group-header">Grupo 7: Dores de Cabeça Frequentes, Enxaqueca e Zumbido</div>
+
+  <div class="question-card">
+    <div class="question-text">7. Tem dores de cabeça frequentes ou enxaquecas após dias de muita cobrança ou estresse?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q7" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q7" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q7" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">8. Sente a cabeça 'pesada' por passar o dia pensando em soluções sem parar, ou nota apito/zumbido constante no ouvido?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q8" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q8" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q8" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 8 -->
+  <div class="group-header">Grupo 8: Peso da Família e Cuidados com os Pais</div>
+
+  <div class="question-card">
+    <div class="question-text">9. Sente que carrega os problemas financeiros ou emocionais da sua família nas costas?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q9" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q9" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q9" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">10. Sente culpa quando tenta cuidar de si mesmo em vez de resolver os problemas dos outros?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q10" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q10" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q10" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 9 -->
+  <div class="group-header">Grupo 9: Cobrança Interna, Autocrítica e Perfeccionismo</div>
+
+  <div class="question-card">
+    <div class="question-text">11. Sente uma necessidade exagerada de resolver a vida dos outros só para se sentir valorizado?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q11" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q11" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q11" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">12. Revisa várias vezes o que faz por medo de cometer qualquer pequeno erro?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q12" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q12" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q12" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 10 -->
+  <div class="group-header">Grupo 10: Perda de Pessoas Amadas, Lutos e Saudade Dolorosa</div>
+
+  <div class="question-card">
+    <div class="question-text">13. Vivenciou perdas de bebês (abortos), gestações interrompidas ou perdas na família?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q13" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q13" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q13" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <!-- GRUPO 11 - SOMATIZAÇÕES MOTORAS E DIGESTIVAS -->
+  <div class="group-header">Grupo 11: Respostas Físicas, Intestinais e Inquietude Motora</div>
+
+  <div class="question-card">
+    <div class="question-text">14. Tem o intestino preso (constipação) por dificuldade em soltar o controle ou medo do futuro?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q14" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q14" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q14" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-text">15. Apresenta agitação incontrolável nas pernas ao se deitar (Síndrome das Pernas Inquietas) ou dores no corpo (fibromialgia)?</div>
+    <div class="options-group">
+      <label class="option-label"><input type="radio" name="q15" value="0" checked> Não (0)</label>
+      <label class="option-label"><input type="radio" name="q15" value="1"> Às vezes (1)</label>
+      <label class="option-label"><input type="radio" name="q15" value="2"> Sim (2)</label>
+    </div>
+  </div>
+
+  <button type="button" class="btn-print" onclick="window.print()">Gerar Relatório / Imprimir PDF</button>
+</div>
+
+</body>
+</html>
