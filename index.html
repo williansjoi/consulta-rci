@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Psicossomática e Neurobiológica</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --bg: #f8f9fa;
+            --text: #333;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .section-desc {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .timeline-box {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .timeline-group {
+            margin-bottom: 20px;
+        }
+
+        .timeline-group h3 {
+            font-size: 1.05rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: #fff;
+            font-size: 0.95rem;
+        }
+
+        .question-card {
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .option-label {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .option-label:hover {
+            background: #f0f7ff;
+            border-color: var(--secondary);
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .option-label {
+            background: var(--secondary);
+            color: #fff;
+            border-color: var(--secondary);
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #1a252f;
+        }
+
+        .error-msg {
+            color: var(--accent);
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+            font-weight: bold;
+        }
+
+        #report {
+            display: none;
+        }
+
+        .report-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .priority-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--secondary);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .priority-item.critical { border-left-color: var(--accent); }
+        .priority-item.high { border-left-color: #e67e22; }
+
+        .priority-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .report-field {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .report-field strong {
+            color: #2c3e50;
+        }
+
+        .investigative-question {
+            background: #fff8e1;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 3px solid #ffc107;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        @media print {
+            .btn-submit, .section-desc { display: none; }
+            .container { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="quiz-form">
+        <h1>Avaliação de Saúde Somática e Emocional</h1>
+        <p class="section-desc">Responda a todas as questões com sinceridade. O preenchimento leva cerca de 10 a 15 minutos.</p>
+
+        <!-- LINHA DO TEMPO DA DOR -->
+        <div class="timeline-box">
+            <div class="timeline-group">
+                <h3>Gatilho Recente (Últimos 1 a 2 anos) *</h3>
+                <select id="gatilho_recente" required>
+                    <option value="">-- Selecione uma opção --</option>
+                    <option value="Nenhum evento grave recente">Nenhum evento grave recente</option>
+                    <option value="Perda de emprego ou crise no trabalho">Perda de emprego ou crise no trabalho</option>
+                    <option value="Separação, divórcio ou brigas no casal">Separação, divórcio ou brigas no casal</option>
+                    <option value="Morte ou doença grave na família">Morte ou doença grave na família</option>
+                    <option value="Prejuízo financeiro ou dívidas grandes">Prejuízo financeiro ou dívidas grandes</option>
+                    <option value="Mudança brusca de casa ou cidade">Mudança brusca de casa ou cidade</option>
+                    <option value="Sobrecarga e cansaço extremo contínuo">Sobrecarga e cansaço extremo contínuo</option>
+                    <option value="Traição, quebra de confiança ou decepção amorosa">Traição, quebra de confiança ou decepção amorosa</option>
+                    <option value="Descoberta de doença grave própria ou de dependente">Descoberta de doença grave própria ou de dependente</option>
+                    <option value="Acidente, assalto ou situação de pavor inesperado">Acidente, assalto ou situação de pavor inesperado</option>
+                </select>
+            </div>
+
+            <div class="timeline-group">
+                <h3>Fase Escolar e Juventude (8 aos 18 anos) *</h3>
+                <select id="fase_escolar" required>
+                    <option value="">-- Selecione uma opção --</option>
+                    <option value="Juventude tranquila e sem grandes marcas">Juventude tranquila e sem grandes marcas</option>
+                    <option value="Bullying, humilhação na escola ou exclusão social">Bullying, humilhação na escola ou exclusão social</option>
+                    <option value="Cobrança exagerada dos pais para ter notas altas ou perfeição">Cobrança exagerada dos pais para ter notas altas ou perfeição</option>
+                    <option value="Brigas constantes, agressões ou divórcio dos pais">Brigas constantes, agressões ou divórcio dos pais</option>
+                    <option value="Sentimento de não ser inteligente, capaz ou suficiente">Sentimento de não ser inteligente, capaz ou suficiente</option>
+                    <option value="Abusos morais, físicos ou traição marcante de amizades">Abusos morais, físicos ou traição marcante de amizades</option>
+                    <option value="Dificuldades financeiras graves ou privações na infância/adolescência">Dificuldades financeiras graves ou privações na infância/adolescência</option>
+                    <option value="Perda prematura de amigos, familiares ou figuras de apoio">Perda prematura de amigos, familiares ou figuras de apoio</option>
+                    <option value="Pressão ou trauma ligado à aceitação da imagem corporal/identidade">Pressão ou trauma ligado à aceitação da imagem corporal/identidade</option>
+                </select>
+            </div>
+
+            <div class="timeline-group">
+                <h3>Primeiros Anos de Vida (0 aos 7 anos) *</h3>
+                <select id="primeiros_anos" required>
+                    <option value="">-- Selecione uma opção --</option>
+                    <option value="Infância inicial segura e calma">Infância inicial segura e calma</option>
+                    <option value="Parto difícil, complicações, cordão enrolado ou UTI ao nascer">Parto difícil, complicações, cordão enrolado ou UTI ao nascer</option>
+                    <option value="Gravidez com muito estresse, medo, luto ou rejeição materna/paterna">Gravidez com muito estresse, medo, luto ou rejeição materna/paterna</option>
+                    <option value="Afastamento, hospitalização ou separação da mãe/pai quando era bebê">Afastamento, hospitalização ou separação da mãe/pai quando era bebê</option>
+                    <option value="Clima familiar de medo, gritos, violência doméstica ou insegurança">Clima familiar de medo, gritos, violência doméstica ou insegurança</option>
+                    <option value="Susto grave, acidente, queda ou internação médica assustadora">Susto grave, acidente, queda ou internação médica assustadora</option>
+                    <option value="Sensação inconsciente ou falada de que 'não era desejado'">Sensação inconsciente ou falada de que 'não era desejado'</option>
+                    <option value="Negligência emocional ou ausência de contato e carinho físico">Negligência emocional ou ausência de contato e carinho físico</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CONTAINER DAS PERGUNTAS -->
+        <div id="questions-container"></div>
+
+        <div class="error-msg" id="error-msg">Por favor, preencha todas as seleções da Linha do Tempo e responda a todas as questões antes de enviar.</div>
+        <button class="btn-submit" onclick="calcularResultado()">Concluir Avaliação</button>
+    </div>
+
+    <!-- RELATÓRIO FINAL -->
+    <div id="report">
+        <div class="report-header">
+            <h2>Relatório de Prioridade Clínica</h2>
+            <p>Gerado automaticamente para direcionamento terapêutico e reprocessamento (RCI).</p>
+        </div>
+
+        <div class="timeline-box">
+            <h3>Linha do Tempo Registrada</h3>
+            <div class="report-field"><strong>Gatilho Recente:</strong> <span id="rep_recente"></span></div>
+            <div class="report-field"><strong>Fase Escolar (8-18 anos):</strong> <span id="rep_escolar"></span></div>
+            <div class="report-field"><strong>Infância (0-7 anos):</strong> <span id="rep_infancia"></span></div>
+        </div>
+
+        <h3>Sequência Prioritária de Tratamento</h3>
+        <div id="priority-list"></div>
+
+        <button class="btn-submit" onclick="window.print()">Imprimir / Salvar PDF</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "Você sente que seu corpo está sempre ligado em um estado de alerta contra perigos invisíveis?",
+        "Costuma ter episódios de taquicardia, falta de ar ou sensação repentina de sufocamento?",
+        "Seu sono é agitado, leve ou interrompido por sobressaltos e tensão muscular?",
+        "Sente necessidade compulsiva de balançar as pernas ou mexer as mãos quando tenta relaxar?",
+        "Reage com sustos desproporcionais a barulhos inesperados ou aproximações físicas?",
+        "Experimenta tremores internos ou tensão constante na musculatura dos braços e pernas?",
+        "Aconteceu algo assustador no passado do qual o seu corpo gela imediatamente só de lembrar?",
+        "Vive antecipando desgraças ou futuros cenários catastróficos para a sua vida?",
+        "Sente um vazio no centro do peito, como se faltasse acolhimento ou aconchego interno?",
+        "Experimenta períodos de tristeza profunda e angústia que surgem sem um motivo racional claro?",
+        "O medo de ser abandonado ou rejeitado pelas pessoas que ama guia as suas decisões?",
+        "Sente uma solidão esmagadora mesmo quando está cercado por familiares ou amigos?",
+        "Perdeu o entusiasmo, a coragem ou a capacidade de sentir prazer nas atividades diárias?",
+        "Acorda com um cansaço físico e mental denso que não melhora mesmo após noites de sono?",
+        "Sente um desânimo tão grande que prefere o isolamento total a interagir socialmente?",
+        "Sente que no fundo ninguém é capaz de compreender a real extensão da sua dor?",
+        "Sente que trabalha exaustivamente, mas sua vida financeira continua presa em ciclos de escassez?",
+        "Vivencia um padrão repetitivo onde após conseguir dinheiro surge um imprevisto que o leva embora?",
+        "Procrastina e paralisa na hora de colocar em prática projetos decisivos para o seu crescimento?",
+        "Costuma fazer compras ou gastos desnecessários para aliviar desconfortos emocionais?",
+        "Sente uma culpa oculta e inconsciente quando começa a prosperar mais que seus familiares?",
+        "Aceita cobranças financeiras injustas ou remunerações muito abaixo do que o seu trabalho vale?",
+        "Abandona seus objetivos na metade quando está prestes a alcançar o sucesso profissional?",
+        "Acredita intimamente que ter muito dinheiro pode afastar você das pessoas que ama?",
+        "Passou por situações no passado em que se sentiu fisicamente ou emocionalmente abusado?",
+        "Foi vítima de traições ou quebras graves de confiança de pessoas que deveriam te proteger?",
+        "Sente extrema dificuldade em confiar nas intenções alheias, esperando sempre o pior?",
+        "Permanece em relacionamentos tóxicos por um medo pavoroso de ficar sozinho?",
+        "Tem enorme dificuldade em dizer 'não' e impor limites claros contra a invasão de terceiros?",
+        "Anula suas próprias vontades e necessidades cotidianas apenas para agradar e não contrariar os outros?",
+        "Sente uma dor física no peito ou estômago quando percebe que alguém está chateado com você?",
+        "Teve a sua privacidade ou integridade violada de forma marcante durante a infância/adolescência?",
+        "Sente dores constantes na coluna ou na região lombar que 'trava' você quando passa por fases de muita preocupação financeira ou sobrecarga?",
+        "Experimenta dores difusas espalhadas pelo corpo inteiro que parecem mudar de lugar e nenhum exame explica?",
+        "Você percebe que episódios de estresse, brigas ou discussões fazem surgir ou intensificar dores pelo seu corpo?",
+        "Acorda com a musculatura do corpo inteira rígida, dura ou dolorida no início do dia?",
+        "Diagnosticou ou suspeita de fibromialgia, com pontos de dor intensa ao toque leve?",
+        "Sente o pescoço, o trapézio e a região dos ombros constantemente travados, como se carregasse um peso físico?",
+        "Experimenta episódios frequentes de queimação, formigamento, pontadas ou agulhadas musculares pelo corpo?",
+        "Sente uma sensação de aperto, peso ou dor intercostal no peito quando pensa em seus problemas?",
+        "Sofre com dores nas articulações (joelhos, punhos, tornozelos) que inflamam nos momentos de crise emocional?",
+        "Sente tonturas, sensação de cabeça flutuando ou vertigem quando fica sob forte pressão mental?",
+        "Já fez diversos exames médicos estruturais que deram normais, mas as dores físicas continuam existindo?",
+        "Sente que seu corpo físico absorveu e guardou em forma de dor todas as pancadas emocionais da sua história?",
+        "Sofre com constipação intestinal crônica, ficando dias sem conseguir evacuar normalmente?",
+        "Sente o abdômen constantemente estufado, rígido, dolorido ou com excesso de gases?",
+        "Seu intestino trava totalmente quando você viaja, muda de ambiente ou passa por tensões?",
+        "Experimenta episódios de azia, refluxo, gastrite ou queimação no estômago ligada ao emocional?",
+        "Sente que seu estômago 'dá um nó' ou trava no instante exato em que recebe uma notícia ruim ou ordem autoritária?",
+        "Apresenta crises de bexiga hiperativa ou vontade urgente de urinar quando passa por nervosismo?",
+        "Descarrega suas emoções na comida, comendo em excesso sem fome ou restringindo demais a alimentação?",
+        "Sente repulsa ou grande culpa após comer, travando batalhas constantes com seu peso ou imagem?",
+        "Sente que o funcionamento da sua digestão espelha o seu excesso de controle emocional?",
+        "Você costuma apresentar dores de cabeça intensas, pulsantes ou recorrentes que chegam a atrapalhar ou paralisar sua rotina?",
+        "Quando sente dor de cabeça, ela costuma vir acompanhada de tontura, enjoo ou sensibilidade incômoda à luz e aos barulhos?",
+        "Sente uma pressão intensa na região da testa, nuca ou têmporas em momentos de forte cobrança?",
+        "Costuma sentir dores de cabeça ou tensão na nuca logo após passar por situações em que precisou engolir a raiva ou guardar frustrações?",
+        "Já precisou se isolar em ambientes escuros e silenciosos por não conseguir suportar a intensidade de uma dor de cabeça?",
+        "Faz uso contínuo de analgésicos fortes para tentar conter dores que sempre retornam?",
+        "Sente que sua cabeça trabalha sem parar, com excesso de pensamentos que não desaceleram?",
+        "Sente que seu corpo só consegue fazer você parar e descansar quando surge uma dor física ou desconforto intenso?",
+        "Sente que carrega um fardo, tristeza ou destino pesado que pertencia aos seus pais ou avós?",
+        "Percebe que repete exatamente os mesmos padrões falidos de relacionamento dos seus genitores?",
+        "Na infância, você precisou virar adulto precocemente para cuidar do estado emocional dos seus pais?",
+        "Existem segredos graves, exclusões ou tragédias não ditas na história da sua família?",
+        "Sente uma culpa oculta por ter mais sucesso, saúde ou felicidade do que o resto da sua família?",
+        "Sente que não pertence de verdade ao seu núcleo familiar, como se estivesse deslocado?",
+        "Carrega uma responsabilidade exagerada de unir e resolver os conflitos de todos os parentes?",
+        "Sente que suas escolhas de vida foram moldadas para corresponder às expectativas frustradas dos pais?",
+        "Carrega uma culpa constante por erros passados, punindo-se mentalmente por eles?",
+        "Exige de si mesmo uma perfeição inalcançável, sentindo-se um fracasso ao cometer pequenos erros?",
+        "Julga-se com severidade extrema e voz crítica interna implacável no seu dia a dia?",
+        "Acredita firmemente que os outros são sempre mais capazes, inteligentes ou merecedores que você?",
+        "Sente uma necessidade de resolver os problemas alheios para se sentir com valor?",
+        "Tem enorme dificuldade em perdoar suas próprias escolhas e atitudes tomadas no passado?",
+        "Sente que nunca faz o suficiente, mesmo trabalhando ou se doando até a exaustão física?",
+        "Recusa elogios ou prêmios por achar que não fez mais do que a sua obrigação?",
+        "Vivenciou perdas de bebês (abortos), gestações interrompidas ou perdas prematuras na família?",
+        "Perdeu alguém de forma repentina e sente que o seu processo de luto ficou congelado no tempo?",
+        "Carrega um vazio profundo e uma saudade dolorosa que não diminui com o passar dos anos?",
+        "Evita frequentar locais, datas ou ouvir músicas que lembrem alguém amado que já faleceu?",
+        "Sente que uma parte da sua alegria vital morreu junto com uma pessoa que você perdeu?",
+        "Entra em quadros de melancolia profunda em épocas específicas do ano (aniversários, finados)?",
+        "Tem dificuldades de se vincular profundamente a novas pessoas por medo de perder novamente?",
+        "Sente que não pôde chorar ou expressar a dor real no momento em que a perda aconteceu?",
+        "Experimenta momentos de dormência emocional, como se estivesse anestesiado por dentro?",
+        "Usa álcool, cigarros, remédios, telas ou apostas para escapar da realidade ou adormecer sentimentos?",
+        "Percebe lapsos de memória em relação a fases inteiras da sua infância/adolescência?",
+        "Consegue relatar traumas severos da sua história com um tom frio ou sorrindo, sem sentir nada?",
+        "Sente uma desconexão entre a sua mente consciente e o que o seu corpo físico está sentindo?",
+        "Quando ocorrem discussões ou conflitos, sua mente simplesmente desliga e você se isola?",
+        "Sente que o mundo ao seu redor às vezes parece distante, estranho ou irreal?",
+        "Tem dificuldade de identificar o que está sentindo (fome, cansaço, tristeza) no momento presente?",
+        "Possui medos intensos e irrazoáveis de coisas específicas (animais, altura, agulhas, avião)?",
+        "Trava totalmente a voz ou o corpo quando precisa falar em público ou passar por avaliações?",
+        "Sofre com pavor de lugares fechados, elevadores ou aglomerações?",
+        "Sente uma necessidade obsessiva de checar portas, janelas ou objetos antes de sair ou dormir?",
+        "Reage com pânico desproporcional diante de incertezas ou mudanças bruscas na rotina?",
+        "Tem pavor de germes, sujeira ou contaminação que exigem rituais repetitivos de limpeza?",
+        "Sente que um trauma antigo criou um bloqueio fóbico que limita sua liberdade de ir e vir?",
+        "Apresenta taquicardia e suor frio só de imaginar passar por uma situação fóbica?",
+        "Tem diagnóstico ou percebe o aparecimento de manchas brancas na pele (Vitiligo)?",
+        "Sofre com episódios frequentes de psoríase, dermatites, eczema ou urticárias na pele?",
+        "Já percebeu o aparecimento ou piora de manchas, coceiras ou feridas na pele logo após vivenciar uma separação, luto ou perda marcante?",
+        "Sente que a sua pele é hipersensível a toques, tecidos, estresse ou mudanças de ambiente?",
+        "Experimenta uma sensação de que sua imagem pública ou honra foi 'manchada' ou atacada?",
+        "Sente uma vergonha oculta do próprio corpo ou um desejo inconsciente de se esconder?",
+        "Tem histórico de alergias cutâneas graves sem causa física comprovada nos exames?",
+        "Percebe que o seu sistema de defesa reage atacando a própria pele nos momentos de estresse?",
+        "Com que frequência você percebe zumbidos, apitos ou chiados nos ouvidos sem que haja um barulho no ambiente?",
+        "Costuma ranger, apertar os dentes ou travar a boca durante a noite ou o dia (Bruxismo / DTM)?",
+        "Ao mastigar, falar ou bocejar, você sente dores, estalos ou cansaço na região do maxilar e do pescoço?",
+        "Perdeu o interesse sexual (libido baixa) ou sente dor/desconforto nas relações íntimas?",
+        "Enfrenta bloqueios sexuais como disfunção erétil, dificuldade de atingir orgasmo ou vaginismo/trava física?",
+        "Sente dores pélvicas ou abdominais baixas sem causa ginecológica/urológica que surgem em fases de estresse?",
+        "Percebe que tensões físicas (como apertar os dentes, dores ou desconfortos corporais) ficam mais fortes em dias em que você guarda raiva?",
+        "Guarda um sentimento de raiva contida e não expressa que faz você travar o maxilar ou o corpo?",
+        "Sente extrema dificuldade em relaxar o corpo e a mente para momentos de intimidade?",
+        "Apresenta desregulação no ciclo menstrual, TPM severa, cólicas intensas ou cistos?",
+        "Tem alteração nos exames de tireoide (hipo/hipertiroidismo) ou nódulos sem causa clara?",
+        "Sente quedas bruscas na disposição, alterações de humor extremas ou ondas de calor no corpo?",
+        "Percebe que seu corpo retém muito líquido ou oscila de peso rapidamente sob estresse?",
+        "Sente frio excessivo nas mãos e pés, problemas de circulação ou extremidades gélidas associadas ao estresse?",
+        "Sente que a sua identidade e valor foram feridos em experiências traumáticas do passado?",
+        "Teve problemas na tireoide iniciados após fases de sufocamento emocional ou falta de voz?",
+        "Experimenta episódios frequentes de exaustão profunda logo ao acordar?",
+        "Sente que o seu corpo perdeu o ritmo natural e os hormônios vivem descompensados?",
+        "Demora mais de 40 minutos para conseguir pegar no sono por causa do excesso de pensamentos?",
+        "Acorda várias vezes durante a noite e tem grande dificuldade para voltar a dormir?",
+        "Sofre com pesadelos frequentes, sensação de sufoco noturno ou paralisia do sono?",
+        "Desperta de madrugada (entre 3h e 5h) com o coração acelerado ou em estado de alerta?",
+        "Sente o corpo totalmente cansado ao acordar, como se não tivesse descansado nada?",
+        "Tem medo inconsciente de dormir e perder o controle sobre o ambiente ao seu redor?",
+        "Depende do uso constante de remédios para conseguir induzir o sono?",
+        "Percebe que os conflitos não resolvidos do dia reaparecem durante a sua noite de sono?",
+        "Adoece com frequência, pegando gripes, resfriados ou herpes com facilidade?",
+        "Sofre com infecções recorrentes (candidíase, infecção urinária, amigdalites)?",
+        "Diagnosticou ou suspeita de condições autoimunes (lúpus, artrite reumatoide, Hashimoto)?",
+        "Qualquer estresse emocional gera reações inflamatórias imediatas no seu organismo?",
+        "Sente que o seu corpo está sem defesas e vulnerável a agressões externas e internas?",
+        "Sente sensibilidade exagerada a luzes fortes, barulhos ou cheiros quando está emocionalmente esgotado?",
+        "Apresenta episódios de inflamação na garganta ou perda de voz (rouquidão) em fases onde precisa se calar?",
+        "Tem feridas, machucados ou aftas que demoram muito mais tempo do que o normal para sarar?",
+        "Vivenciou fases longas de desamparo e solidão antes do surgimento das dores inflamatórias?",
+        "Sente que o seu próprio sistema de defesa parece atacá-lo em vez de protegê-lo?",
+        "Experimenta tremores nas mãos ou tiques nervosos nos olhos quando sob forte tensão interpessoal?",
+        "Sente que sua postura corporal mudou (curvado, encolhido) como forma inconsciente de se defender?",
+        "Sente que desconfortos ou dores físicas surgem ou aumentam no exato momento em que você entra em um confronto ou discussão?",
+        "Sente que sua energia física descarrega totalmente (sensação de 'desmaio' ou fraqueza) após fortes emoções?",
+        "Sente que seu corpo físico virou um mapa vivo que expressa todas as dores que sua mente não conseguiu verbalizar?"
+    ];
+
+    const categoryMapping = [
+        { name: "Alerta Neurovegetativo e Ansiedade", range: [0, 7], 
+          cause: "O corpo está retido em um estado contínuo de alerta contra perigos invisíveis. O alarme de emergência do sistema nervoso permanece ativado sem interrupções.",
+          body: "Aumento da frequência cardíaca, tensão muscular de vigilância e hipertensão do eixo HPA com excesso de adrenalina.",
+          q: "Quando foi a primeira vez na sua infância que você sentiu um pavor tão grande que achou que algo terrível aconteceria com você?",
+          rci: "Conectar a sensação física de alerta à memória da infância identificada. Aplicar o estímulo bilateral rápido na cena inicial até zerar a carga de pavor e instalar a segurança no presente." },
+        
+        { name: "Desamparo e Afeto de Abandono", range: [8, 15],
+          cause: "Dor crônica de desconexão e solidão primária decorrente de falhas de acolhimento nos primeiros anos de vida.",
+          body: "Sensação de vazio no peito, fadiga crônica e perda da drive dopaminérgica de prazer.",
+          q: "Qual é a lembrança mais antiga de se sentir sozinho e desprotegido, sem ninguém para te abraçar ou acolher?",
+          rci: "Acessar a cena de desamparo infantil, oferecer o recurso de autoacolhimento e reprocessar o trauma de rejeição até dissolver a opressão torácica." },
+
+        { name: "Bloqueio de Prosperidade e Ação", range: [16, 23],
+          cause: "Lealdade invisível à escassez familiar e culpa inconsciente por ter mais sucesso que os genitores.",
+          body: "Autossabotagem, paralisia de ação e autopunição financeira inconsciente.",
+          q: "Quem na sua família sofreu muito por dinheiro e de quem você tem medo de se afastar se ficar muito rico?",
+          rci: "Reprocessar a cena de sofrimento financeiro dos pais, desfazer o pacto de lealdade cega e instalar a permissão para ter abundância." },
+
+        { name: "Limites e Invasão Interpessoal", range: [24, 31],
+          cause: "Hipervigilância contra agressões físicas ou morais passadas, gerando submissão ou esquiva social.",
+          body: "Dificuldade de impor limites, autoanulação e dor visceral imediata diante de conflitos.",
+          q: "Quem foi a pessoa que mais violou os seus limites no passado sem que você pudesse se defender?",
+          rci: "Trabalhar a cena de abuso ou invasão, recuperar o poder pessoal e dessensibilizar o medo de confronto interpessoal." },
+
+        { name: "Somatização Muscular e Fibromialgia", range: [32, 43],
+          cause: "Sensibilização central por acúmulo de tensões, mágoas e agressividade não expressa na história de vida.",
+          body: "Rigidez muscular crônica, dores difusas, lombalgia travada e pontos dolorosos ao toque.",
+          q: "Se a parte do seu corpo que mais dói hoje pudesse falar uma frase, qual mágoa antiga ela estaria contando?",
+          rci: "Focar na região dolorida do corpo, resgatar a memória emocional associada e aplicar RCI até a musculatura descomprimir e a dor ceder." },
+
+        { name: "Sensibilidade Gastrointestinal e Vagal", range: [44, 52],
+          cause: "Incapacidade de 'digestão psíquica' de fatos traumáticos ou controle emocional excessivo.",
+          body: "Constipação, gastrite, refluxo e espasmos viscerais imediatos diante de notícias ruins.",
+          q: "Qual foi a situação mais 'indigesta' da sua vida que você foi obrigado a aceitar sem conseguir falar nada?",
+          rci: "Acessar a cena do fato não digerido, reprocessar a raiva contida no estômago/intestino e liberar a necessidade de controle." },
+
+        { name: "Tensão Cefálica e Enxaqueca", range: [53, 60],
+          cause: "Ruminamento mental contínuo, represamento de raiva e falta de autorização para parar e descansar.",
+          body: "Vasoespasmos cranianos, pressão nas têmporas e sensibilidade neurológica extrema a estímulos.",
+          q: "O que você está tentando resolver na sua cabeça há anos e que te dá uma raiva enorme por não conseguir mudar?",
+          rci: "Dessensibilizar o foco da dor na cabeça associado à frustração de controle. Reprocessar a exigência de ter que resolver tudo sozinho." },
+
+        { name: "Padrões Sistêmicos e Lealdade Familiar", range: [61, 68],
+          cause: "Carregamento de fardos de antepassados e repetição de ciclos emocionais transgeracionais.",
+          body: "Sensação de peso físico nas costas, parentificação na infância e sensação de não pertencimento.",
+          q: "De quem é o fardo ou a tristeza pesada que você carrega nas suas costas desde que era criança?",
+          rci: "Fazer o desligamento de lealdades sistêmicas traumáticas e reprocessar a cena em que assumiu papéis de adulto precocemente." },
+
+        { name: "Autocrítica Implacável e Perfeccionismo", range: [69, 76],
+          cause: "Internalização da voz crítica dos pais ou educadores, gerando busca compulsiva por validação.",
+          body: "Exaustão física, cobrança interna punitiva e incapacidade de desfrutar de realizações.",
+          q: "Quem era a pessoa na sua infância que sempre te cobrava perfeição e fazia você se sentir insuficiente?",
+          rci: "Reprocessar a memória de cobrança ou humilhação escolar/familiar e instalar a aceitação incondicional de si mesmo." },
+
+        { name: "Luto Congelado e Perdas", range: [77, 84],
+          cause: "Processo de luto não elaborado ou interrompido abruptamente, mantendo o afeto retido no passado.",
+          body: "Sensação de vazio no peito, melancolia em datas específicas e bloqueio no vínculo com novas pessoas.",
+          q: "Quem foi a pessoa que você perdeu e da qual sente que nunca pôde chorar tudo o que precisava?",
+          rci: "Acessar o momento do impacto da notícia da perda, aplicar o RCI para drenar a dor não chorada e integrar o processo de despedida." },
+
+        { name: "Dissociação e Amorteecimento", range: [85, 92],
+          cause: "Mecanismo de defesa psíquico que desconecta a mente consciente do corpo para suportar dores extremas.",
+          body: "Sensação de anestesia emocional, lapsos de memória da infância e alienação corporal.",
+          q: "Qual foi a dor tão grande do seu passado que fez você preferir 'desligar' os seus sentimentos para conseguir sobreviver?",
+          rci: "Promover a reconexão somatopsíquica segura, reprocessar a cena de dor extrema com recursos de ancoragem no presente." },
+
+        { name: "Fobias e Comportamento Obsessivo", range: [93, 100],
+          cause: "Deslocamento da angústia trauma de origem para objetos ou situações específicas como forma de tentar controlar o pavor.",
+          body: "Rituais de checagem, pânico em ambientes específicos e travamento de voz/corpo.",
+          q: "Qual foi o momento exato da sua vida em que você perdeu totalmente o controle e sentiu um pavor incontrolável?",
+          rci: "Dessensibilizar a memória de descontrole original e reprogramar a resposta neurológica diante do estímulo fóbico." },
+
+        { name: "Reatividade Cutânea e Dermatoses", range: [101, 108],
+          cause: "Conflito de separação, perda de contato protetor ou sensação de imagem/honra 'manchada'.",
+          body: "Psoríase, eczema, vitiligo e hipersensibilidade cutânea reativa ao estresse emocional.",
+          q: "Quem foi a pessoa que se afastou de você ou cuja separação fez você sentir que perdeu a sua 'proteção'?",
+          rci: "Reprocessar o trauma do rompimento ou ataque à honra associado ao surgimento das manchas/lesões na pele." },
+
+        { name: "Repressão de Raiva, DTM e Zumbido", range: [109, 117],
+          cause: "Sufocamento de raiva contida e não dita, gerando sobrecarga na musculatura craniofacial e acústica.",
+          body: "Bruxismo, dores no maxilar, ruídos auditivos e tensões pélvicas por travamento físico.",
+          q: "O que você gostaria de ter gritado para alguém no passado, mas teve que morder a língua e engolir?",
+          rci: "Permitir a expressão catártica e segura da raiva represada na cena original e dessensibilizar a tensão mandibular." },
+
+        { name: "Desregulação Hormonal e Endócrina", range: [118, 126],
+          cause: "Exaustão contínua do sistema neuroendócrino por fases longas de desamparo ou falta de voz/expressão.",
+          body: "Alterações de tireoide, fadiga adrenal, retenção de líquido e instabilidade metabólica.",
+          q: "Em qual fase da sua vida você sentiu que a sua voz foi totalmente sufocada e que não adiantava pedir ajuda?",
+          rci: "Reprocessar a memória de sufocamento emocional, restabelecer a autoexpressão e desfazer a sobrecarga do eixo endócrino." },
+
+        { name: "Arquitetura do Sono e Despertar", range: [127, 134],
+          cause: "Incapacidade de desligar o controle pela associação inconsciente entre dormir e ficar desprotegido.",
+          body: "Insônia inicial, despertares com taquicardia de madrugada e pesadelos de sobrevivência.",
+          q: "O que acontecia de assustador na sua casa durante a noite quando você era criança?",
+          rci: "Dessensibilizar as memórias de traumas noturnos e recondicionar a permissão neurológica para um sono reparador." },
+
+        { name: "Responssividade Imunológica e Autoimunidade", range: [135, 149],
+          cause: "Padrão de autoagressão psíquica e vivências longas de solidão/desamparo onde o corpo 'ataca a si mesmo'.",
+          body: "Processos autoimunes, infecções de repetição e respostas inflamatórias imediatas ao estresse.",
+          q: "Quando foi que você começou a se culpar de tal forma que sentiu que nem você mesmo estava ao seu lado?",
+          rci: "Reprocessar a culpa primária e o desamparo, instalando a autocompaixão e reordenando o sistema de defesa imunológico." }
+    ];
+
+    const container = document.getElementById('questions-container');
+    questions.forEach((q, index) => {
+        const div = document.createElement('div');
+        div.className = 'question-card';
+        div.innerHTML = `
+            <div class="question-text">${index + 1}. ${q}</div>
+            <div class="options-group">
+                <input type="radio" id="q${index}_0" name="q${index}" value="0">
+                <label class="option-label" for="q${index}_0">0 - Não / Nunca</label>
+                
+                <input type="radio" id="q${index}_1" name="q${index}" value="1">
+                <label class="option-label" for="q${index}_1">1 - Às vezes</label>
+                
+                <input type="radio" id="q${index}_2" name="q${index}" value="2">
+                <label class="option-label" for="q${index}_2">2 - Sim / Frequente</label>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    function calcularResultado() {
+        const rec = document.getElementById('gatilho_recente').value;
+        const esc = document.getElementById('fase_escolar').value;
+        const inf = document.getElementById('primeiros_anos').value;
+
+        if (!rec || !esc || !inf) {
+            document.getElementById('error-msg').style.display = 'block';
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        let answers = [];
+        let allAnswered = true;
+
+        for (let i = 0; i < questions.length; i++) {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                allAnswered = false;
+                break;
+            }
+            answers.push(parseInt(selected.value));
+        }
+
+        if (!allAnswered) {
+            document.getElementById('error-msg').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('error-msg').style.display = 'none';
+
+        let results = categoryMapping.map(cat => {
+            let score = 0;
+            for (let i = cat.range[0]; i <= cat.range[1] && i < answers.length; i++) {
+                score += answers[i];
+            }
+            return {
+                ...cat,
+                score: score,
+                maxScore: (cat.range[1] - cat.range[0] + 1) * 2
+            };
+        });
+
+        results = results.filter(r => r.score > 0).sort((a, b) => b.score - a.score);
+
+        document.getElementById('rep_recente').innerText = rec;
+        document.getElementById('rep_escolar').innerText = esc;
+        document.getElementById('rep_infancia').innerText = inf;
+
+        const priorityList = document.getElementById('priority-list');
+        priorityList.innerHTML = '';
+
+        results.forEach((item, idx) => {
+            let priorityClass = 'normal';
+            let priorityLabel = 'Prioridade Moderada';
+
+            if (idx === 0 || item.score >= 12) {
+                priorityClass = 'critical';
+                priorityLabel = 'Prioridade 1 (Nível Crítico)';
+            } else if (idx < 3 || item.score >= 8) {
+                priorityClass = 'high';
+                priorityLabel = `Prioridade ${idx + 1} (Nível Alto)`;
+            } else {
+                priorityLabel = `Prioridade ${idx + 1} (Nível Moderado)`;
+            }
+
+            const pItem = document.createElement('div');
+            pItem.className = `priority-item ${priorityClass}`;
+            pItem.innerHTML = `
+                <div class="priority-title">${idx + 1}. ${priorityLabel} - Impacto Pontuado: ${item.score}/${item.maxScore}</div>
+                <div class="report-field"><strong>Entenda a Causa:</strong> ${item.cause}</div>
+                <div class="report-field"><strong>Mecanismo Ativo no Corpo:</strong> ${item.body}</div>
+                <div class="investigative-question"><strong>Pergunta Investigativa:</strong> "${item.q}"</div>
+                <div class="report-field"><strong>Procedimento Terapeuta (RCI):</strong> ${item.rci}</div>
+            `;
+            priorityList.appendChild(pItem);
+        });
+
+        document.getElementById('quiz-form').style.display = 'none';
+        document.getElementById('report').style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
